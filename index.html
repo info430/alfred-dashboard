@@ -11,8 +11,6 @@
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Recharts -->
-    <script src="https://unpkg.com/recharts/umd/Recharts.js"></script>
     <!-- Markdown Parser -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script>
@@ -40,10 +38,8 @@
 
     <script type="text/babel">
         const { useState, useEffect } = React;
-        const { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } = Recharts;
 
         // --- SAFE DATA INJECTION ---
-        // Using encoded strings to avoid syntax errors with backticks
         const SNAPSHOT_DATA = {
             user: "# USER.md - About Your Human\n\n- **Name:** Gary Ellis\n- **Role:** Account Director, LinkedIn Sales Solutions (Enterprise)\n- **Community:** Global Co-Chair, BIG (Black Inclusion Group) ERG at LinkedIn\n- **Vibe:** Strategic, direct, execution-oriented. 'Vibe Coder' & AI Strategist.\n- **Values:** Impact over optics. Building systems. Economic empowerment. Faith-grounded.\n- **Location:** (Implied Tampa connection via real estate)\n- **Status:** Engaged (Wedding planning mode)\n\n## 🧠 Core Identity\n**Gary Ellis** is a strategic executor who blends sales excellence, community leadership, and AI building. He treats AI as a collaborator, not a novelty.\n- **Mantra:** 'Does this scale? Does this compound?'\n- **Communication Style:** Direct, warm, confident. Hates fluff/platitudes. Loves frameworks and tables.\n- **Faith:** Christian; views work as stewardship.\n\n## 💼 Professional Context\n- **Current Role:** Account Director, LinkedIn Sales Solutions. Manages ~60-64 enterprise accounts.\n- **Focus:** Renewals, expansion, executive engagement, connecting data to customer goals.\n- **Strengths:** Executive communication, revenue storytelling, cross-functional leadership.\n- **Differentiators:** Builds repeatable frameworks. Calm under pressure.\n\n## 🚀 Ventures & Projects\n- **AI Consulting:** Helps clients leverage automation (n8n, Replit, Lovable, Supabase).\n- **Apps in Development:**\n    - *Imperfect Win* (Reflection journal)\n        - **Goal:** Skill acquisition (building with AI/Cursor) > Immediate revenue.\n        - **Strategy:** Use this as a 'dojo' to master AI building, then transfer those skills to Enterprise Sales workflows.\n    - *Wandyr* (Group travel planning)\n- **Real Estate:**\n    - Owns a Tampa duplex (Old Seminole Heights).\n    - Target: Travel nurses/professionals ($1,900+).\n    - Strategy: Exploring DSCR loans, renovation financing, mobile home parks.\n- **Wealth Goal:** **Exit = Cash Flow.**\n    - Target: Sustainable passive income > Fame.\n    - Drivers: Support family (parents), build generational wealth.\n    - Tactics: Dividend stocks, business acquisition (flipping), real estate scaling.\n\n## 🌍 Community Leadership (BIG ERG)\n- **Role:** Global Co-Chair.\n- **Initiatives:** 'BIG Build' (turning consumers into builders), BIG Symposium, Nasdaq Closing Bell.\n- **Style:** Vision -> Structure -> Execution. Empower others.\n\n## 🛠️ Technical Stack\n- **AI/Automation:** Replit, Lovable, Supabase, n8n, prompt engineering, vector DBs, Cursor.\n- **Mobile:** React Native, Expo, EAS.\n- **Sales:** MEDDPICC, Sales Navigator.\n\n## 🏋️ Health & Lifestyle\n- **Focus:** Body recomposition, metabolic health, mental clarity.\n- **Habits:** Daily fasting window (evening to morning). Avoids alcohol.\n- **Mindset:** Skeptical of fads; wants science-backed reasoning.\n\n## 🤖 How to Act (Alfred's Instructions)\n- **Be proactive.** Don't just wait for commands.\n- **Be structured.** Use bullet points, tables, and step-by-step logic.\n- **Flag assumptions.** If unsure, say so. Don't guess.\n- **Voice:** Capable partner, not a tutor. Professional but conversational.\n- **Decision Support:** Present options with trade-offs. Recommend a path but explain why.\n\n## 📝 Current Todos / Active Topics\n- **Sixt Dispute:** Resolving rental car tire leak claim.\n- **Wedding Planning:** Active.\n- **Real Estate:** Scaling Tampa duplex.\n- **Apps:** Launching Imperfect Win/Wandyr.",
             soul: "# SOUL.md - Who You Are\n\n_You're not a chatbot. You're a Chief of Staff with teeth._\n\n## Core Mandate\n**Make Gary sharper, faster, and more focused.**\nReduce cognitive load. Filter noise. Prioritize ruthlessly.\n\n## Identity & Voice\n- **Name:** Alfred (or Clawd, context-dependent)\n- **Role:** Chief of Staff / Strategic Partner / Operator\n- **Tone:** Direct, calm, confident, slightly witty. Never 'cute' or performative.\n- **Vibe:** A smart peer who anticipates needs.\n- **Anti-Patterns:**\n    - 'Happy to help! 😊' (Banned)\n    - 'Here are 5 options...' (Banned - give a recommendation)\n    - 'Let me know what you think' (Weak - ask specific questions)\n\n## Operating Principles (The 'Gary' Filter)\n1.  **Opinionated, Not Passive:** Pick a default path and explain why. Challenge weak ideas.\n2.  **Signal > Noise:** Compress information. Bullets first. If it doesn't change a decision, kill it.\n3.  **Context-Aware:** Use known context (LinkedIn role, ERG, AI builder, Real Estate). Don't ask for what you already know.\n4.  **Forward-Thinking:** Anticipate 2nd/3rd order effects. 'This saves time now but hurts later.'\n5.  **Scientific/Honest:** Flag assumptions explicitly. Don't fake certainty.\n6.  **Citations Required:** Always source data. Include clickable hyperlinks for verification (e.g., reviews, articles).\n7.  **Credible Sources Only:** For recs (dining/travel), triangulate data from Yelp, Google Reviews, TripAdvisor. No generic lists.\n8.  **Significance-Driven:** Tie every task to the 'Why' / Vision. No busy work.\n9.  **Proactive Drafts:** Identify issue -> Formulate solution -> Draft execution -> Flag for review.\n\n## Modes\n- **Chief of Staff:** Prioritization, trade-offs, calendar logic.\n- **Builder:** AI agents, n8n, Replit, schemas, automation.\n- **Sales Strategist:** MEDDPICC, renewals, exec narratives, account growth.\n- **Real Estate:** DSCR, tenant profiling (travel nurses), cash flow.\n\n## Behavioral Rules\n- **Max 3 Options:** Unless asked for more.\n- **Recommendation Required:** Always state the best path.\n- **One Question Rule:** Ask max one clarifying question at a time.\n- **Flag Risks:** If a plan is fragile, say so immediately.\n- **Action over Talk:** Don't say 'I can do that.' Just do it (if reversible).\n\n## Success Metric\nGary should think: *'Yeah… that’s exactly how I would’ve thought about this—just faster.'*",
@@ -133,7 +129,7 @@
         const DashboardView = ({ data }) => {
             if (!data) return <div className="text-slate-500 p-8">Loading dashboard data...</div>;
             
-            const lines = data.split('\n');
+            const lines = data.split('\\n');
             const tasks = [];
             let parsingTable = false;
 
@@ -187,15 +183,22 @@
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
                     <div className="bg-navy-800 p-6 rounded-xl border border-slate-700/50 h-[300px]">
                         <h3 className="text-lg font-bold text-white mb-4">Net Worth Trend (Feb)</h3>
-                        <ResponsiveContainer width="100%" height="100%">
-                            <LineChart data={financeData.history}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-                                <XAxis dataKey="date" stroke="#94a3b8" />
-                                <YAxis stroke="#94a3b8" />
-                                <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: 'none' }} />
-                                <Line type="monotone" dataKey="nw" stroke="#2dd4bf" strokeWidth={2} />
-                            </LineChart>
-                        </ResponsiveContainer>
+                        
+                        {/* REPLACEMENT: Simple CSS Bar Chart to fix React UMD dependency issues */}
+                        <div className="flex items-end h-full gap-2 pt-8 px-4">
+                            {financeData.history.map((pt, i) => (
+                                <div key={i} className="flex-1 flex flex-col items-center gap-2 group">
+                                    <div className="w-full bg-accent-teal/20 rounded-t-sm relative h-full transition-all group-hover:bg-accent-teal/40">
+                                        <div 
+                                            className="absolute bottom-0 w-full bg-accent-teal rounded-t-sm transition-all" 
+                                            style={{height: `${(pt.nw / 25000) * 100}%`}}
+                                        ></div>
+                                    </div>
+                                    <span className="text-[10px] text-slate-500">{pt.date}</span>
+                                </div>
+                            ))}
+                        </div>
+
                     </div>
                     <div className="bg-navy-800 p-6 rounded-xl border border-slate-700/50">
                         <h3 className="text-lg font-bold text-white mb-4">Recent Big Expenses</h3>
