@@ -42,7 +42,7 @@
         const { useState, useEffect } = React;
         const { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } = Recharts;
 
-        // --- Mock Data for Finance (Replace with fetch from finance.json later) ---
+        // --- Live Data (Injected by Alfred) ---
         const financeData = {
             netWorth: 21545,
             liquid: 35000,
@@ -71,6 +71,7 @@
                         { id: 'dashboard', label: 'Mission Control', icon: '🚀' },
                         { id: 'finance', label: 'Financials', icon: '💰' },
                         { id: 'docs', label: 'Knowledge Base', icon: '🧠' },
+                        { id: 'logs', label: 'Activity Log', icon: '📝' },
                     ].map(tab => (
                         <button key={tab.id} onClick={() => setActiveTab(tab.id)}
                             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
@@ -91,20 +92,91 @@
             </div>
         );
 
+        const KanbanCard = ({ task }) => (
+            <div className="bg-navy-700 p-4 rounded-lg shadow-sm border border-slate-600/30 hover:border-accent-blue/50 hover:translate-y-[-2px] transition-all cursor-pointer group">
+                <div className="flex justify-between items-start mb-2">
+                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
+                        task.status.includes('Needs') ? 'bg-red-500/20 text-red-400' :
+                        task.status.includes('Track') ? 'bg-green-500/20 text-green-400' :
+                        'bg-blue-500/20 text-blue-400'
+                    }`}>
+                        {task.status.replace('🔴 ', '').replace('🟢 ', '').replace('🟡 ', '').replace('🔵 ', '').replace('⚪ ', '')}
+                    </span>
+                    <span className="text-slate-500 text-xs">{task.owner}</span>
+                </div>
+                <h4 className="font-semibold text-slate-200 mb-2">{task.project}</h4>
+                <p className="text-sm text-slate-400 leading-relaxed">{task.action}</p>
+            </div>
+        );
+
+        const KanbanColumn = ({ title, tasks, count }) => (
+            <div className="flex-1 min-w-[300px] bg-navy-800/50 rounded-xl flex flex-col h-full border border-slate-700/30">
+                <div className="p-4 flex items-center justify-between border-b border-slate-700/30">
+                    <h3 className="font-bold text-slate-300 flex items-center gap-2">
+                        {title}
+                        <span className="bg-slate-700 text-slate-300 text-xs px-2 py-0.5 rounded-full">{count}</span>
+                    </h3>
+                </div>
+                <div className="p-3 space-y-3 overflow-y-auto flex-1 custom-scrollbar">
+                    {tasks.map((task, i) => <KanbanCard key={i} task={task} />)}
+                </div>
+            </div>
+        );
+
+        const DashboardView = ({ data }) => {
+            if (!data) return <div className="text-slate-500 p-8">Loading dashboard data...</div>;
+            
+            const lines = data.split('\n');
+            const tasks = [];
+            let parsingTable = false;
+
+            lines.forEach(line => {
+                if (line.includes('| Project | Status |')) { parsingTable = true; return; }
+                if (parsingTable && line.trim().startsWith('|') && !line.includes('---')) {
+                    const parts = line.split('|').map(p => p.trim()).filter(p => p);
+                    if (parts.length >= 4) {
+                        tasks.push({
+                            project: parts[0].replace(/\*\*/g, ''),
+                            status: parts[1],
+                            action: parts[2],
+                            owner: parts[3]
+                        });
+                    }
+                }
+                if (parsingTable && line.trim() === '') parsingTable = false;
+            });
+
+            const todoTasks = tasks.filter(t => t.status.includes('Needs') || t.status.includes('Research') || t.status.includes('Backlog'));
+            const progressTasks = tasks.filter(t => t.status.includes('Track') || t.status.includes('Planning') || t.status.includes('Connected') || t.status.includes('Automated') || t.status.includes('Live'));
+            const doneTasks = tasks.filter(t => t.status.includes('Closed') || t.status.includes('Done'));
+
+            return (
+                <div className="h-full flex flex-col">
+                    <header className="mb-6">
+                        <h1 className="text-3xl font-bold text-white mb-1">Mission Control</h1>
+                        <p className="text-slate-400 text-sm">Overview of active operations.</p>
+                    </header>
+                    <div className="flex-1 flex gap-6 overflow-x-auto pb-4">
+                        <KanbanColumn title="Action Required" tasks={todoTasks} count={todoTasks.length} />
+                        <KanbanColumn title="In Progress / Active" tasks={progressTasks} count={progressTasks.length} />
+                        <KanbanColumn title="Completed" tasks={doneTasks} count={doneTasks.length} />
+                    </div>
+                </div>
+            );
+        };
+
         const FinanceView = () => (
             <div className="h-full overflow-y-auto pr-2">
                 <header className="mb-8">
                     <h1 className="text-3xl font-bold text-white mb-2">Financial Pulse</h1>
                     <p className="text-slate-400">Live data from SimpleFIN & Beancount Ledger.</p>
                 </header>
-
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                     <StatCard title="Net Worth" value={`$${financeData.netWorth.toLocaleString()}`} subtext="Liquid Assets - Debt" color="green" />
                     <StatCard title="Liquid Cash" value={`$${financeData.liquid.toLocaleString()}`} subtext="Checking + Savings + Brokerage" color="blue" />
                     <StatCard title="Total Debt" value={`-$${financeData.debt.toLocaleString()}`} subtext="Credit Cards (Amex/Chase)" color="red" />
                     <StatCard title="Feb Savings Rate" value={`${financeData.savingsRate}%`} subtext="Income vs Expenses" color="accent-teal" />
                 </div>
-
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
                     <div className="bg-navy-800 p-6 rounded-xl border border-slate-700/50 h-[300px]">
                         <h3 className="text-lg font-bold text-white mb-4">Net Worth Trend (Feb)</h3>
@@ -118,7 +190,6 @@
                             </LineChart>
                         </ResponsiveContainer>
                     </div>
-                    
                     <div className="bg-navy-800 p-6 rounded-xl border border-slate-700/50">
                         <h3 className="text-lg font-bold text-white mb-4">Recent Big Expenses</h3>
                         <div className="space-y-3">
@@ -142,16 +213,75 @@
             </div>
         );
 
+        const MarkdownView = ({ title, content }) => (
+             <div className="max-w-4xl mx-auto h-full overflow-y-auto pr-4 pb-20">
+                <h1 className="text-3xl font-bold text-white mb-6 sticky top-0 bg-navy-900 py-4 z-10 border-b border-slate-700/50">{title}</h1>
+                <div className="prose prose-invert prose-slate max-w-none" dangerouslySetInnerHTML={{ __html: marked.parse(content || '') }}></div>
+            </div>
+        );
+
         const App = () => {
-            const [activeTab, setActiveTab] = useState('finance'); 
-            
+            const [activeTab, setActiveTab] = useState('dashboard');
+            const [dashboardContent, setDashboardContent] = useState('');
+            const [userContent, setUserContent] = useState('');
+            const [soulContent, setSoulContent] = useState('');
+            const [logsContent, setLogsContent] = useState('');
+
+            useEffect(() => {
+                const loadFile = async (file, setter) => {
+                    try {
+                        const res = await fetch(`data/${file}?t=${Date.now()}`);
+                        if (res.ok) {
+                            const text = await res.text();
+                            setter(text);
+                        } else {
+                            setter(`*Content for ${file} not found. Ensure it is pushed to data/ folder.*`);
+                        }
+                    } catch (e) {
+                        setter('*Loading error...*');
+                    }
+                };
+
+                loadFile('USER.md', setUserContent);
+                loadFile('SOUL.md', setSoulContent);
+                loadFile('LOGS.md', setLogsContent);
+                
+                // Set Dashboard Status
+                setDashboardContent(`# 🦅 Alfred's Mission Control
+**Last Sync:** ${new Date().toLocaleDateString()}
+
+## 🚦 Priority Status
+| Project | Status | Next Action | Owner |
+| :--- | :--- | :--- | :--- |
+| **Finance Engine** | 🟢 **Live** | Monitor daily briefings; Pay off $13k Debt | Alfred |
+| **Real Estate** | 🟡 Research | Contact Easy Street Capital (DSCR) | Alfred |
+| **Imperfect Win** | 🔵 Backlog | Define MVP Features | Gary |
+| **Wedding** | 🟢 Planning | (Funded via Personal Budget) | Gary |
+| **Utility Ops** | 🟢 Automated | Monthly Tenant Billing Protocol Active | Alfred |
+| **GitHub** | 🟢 Connected | (info430) | Alfred |
+`);
+            }, []);
+
             return (
                 <div className="flex min-h-screen bg-navy-900 text-slate-200">
                     <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+                    
                     <main className="ml-64 flex-1 p-8 h-screen overflow-hidden">
+                        {activeTab === 'dashboard' && <DashboardView data={dashboardContent} />}
                         {activeTab === 'finance' && <FinanceView />}
-                        {activeTab === 'dashboard' && <div className="text-slate-500">Main Dashboard View (Kanban) goes here...</div>}
-                        {activeTab === 'docs' && <div className="text-slate-500">Docs View goes here...</div>}
+                        {activeTab === 'docs' && (
+                            <div className="grid grid-cols-2 gap-8 h-full">
+                                <div className="bg-navy-800/30 p-6 rounded-xl border border-slate-700/30 overflow-y-auto">
+                                    <h2 className="text-xl font-bold text-accent-teal mb-4 sticky top-0 bg-navy-800/90 p-2 rounded">USER.md (Context)</h2>
+                                    <div className="prose prose-invert prose-sm" dangerouslySetInnerHTML={{__html: marked.parse(userContent || '')}}></div>
+                                </div>
+                                <div className="bg-navy-800/30 p-6 rounded-xl border border-slate-700/30 overflow-y-auto">
+                                    <h2 className="text-xl font-bold text-accent-purple mb-4 sticky top-0 bg-navy-800/90 p-2 rounded">SOUL.md (Operating System)</h2>
+                                    <div className="prose prose-invert prose-sm" dangerouslySetInnerHTML={{__html: marked.parse(soulContent || '')}}></div>
+                                </div>
+                            </div>
+                        )}
+                        {activeTab === 'logs' && <MarkdownView title="Activity Log (Memory)" content={logsContent} />}
                     </main>
                 </div>
             );
