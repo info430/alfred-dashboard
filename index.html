@@ -129,7 +129,7 @@
         const DashboardView = ({ data }) => {
             if (!data) return <div className="text-slate-500 p-8">Loading dashboard data...</div>;
             
-            const lines = data.split('\\n');
+            const lines = data.split('\n');
             const tasks = [];
             let parsingTable = false;
 
