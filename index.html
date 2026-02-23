@@ -42,7 +42,13 @@
         const { useState, useEffect } = React;
         const { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } = Recharts;
 
-        // --- Live Data (Injected by Alfred) ---
+        // --- EMBEDDED DATA (Snapshot) ---
+        const SNAPSHOT_USER = `# USER.md - About Your Human\n\n- **Name:** Gary Ellis\n- **Role:** Account Director, LinkedIn Sales Solutions (Enterprise)\n- **Community:** Global Co-Chair, BIG (Black Inclusion Group) ERG at LinkedIn\n- **Vibe:** Strategic, direct, execution-oriented. "Vibe Coder" & AI Strategist.\n- **Values:** Impact over optics. Building systems. Economic empowerment. Faith-grounded.\n- **Location:** (Implied Tampa connection via real estate)\n- **Status:** Engaged (Wedding planning mode)\n\n## 🧠 Core Identity\n**Gary Ellis** is a strategic executor who blends sales excellence, community leadership, and AI building. He treats AI as a collaborator, not a novelty.\n- **Mantra:** "Does this scale? Does this compound?"\n- **Communication Style:** Direct, warm, confident. Hates fluff/platitudes. Loves frameworks and tables.\n- **Faith:** Christian; views work as stewardship.\n\n## 💼 Professional Context\n- **Current Role:** Account Director, LinkedIn Sales Solutions. Manages ~60-64 enterprise accounts.\n- **Focus:** Renewals, expansion, executive engagement, connecting data to customer goals.\n- **Strengths:** Executive communication, revenue storytelling, cross-functional leadership.\n- **Differentiators:** Builds repeatable frameworks. Calm under pressure.\n\n## 🚀 Ventures & Projects\n- **AI Consulting:** Helps clients leverage automation (n8n, Replit, Lovable, Supabase).\n- **Apps in Development:**\n    - *Imperfect Win* (Reflection journal)\n        - **Goal:** Skill acquisition (building with AI/Cursor) > Immediate revenue.\n        - **Strategy:** Use this as a "dojo" to master AI building, then transfer those skills to Enterprise Sales workflows.\n    - *Wandyr* (Group travel planning)\n- **Real Estate:**\n    - Owns a Tampa duplex (Old Seminole Heights).\n    - Target: Travel nurses/professionals ($1,900+).\n    - Strategy: Exploring DSCR loans, renovation financing, mobile home parks.\n- **Wealth Goal:** **Exit = Cash Flow.**\n    - Target: Sustainable passive income > Fame.\n    - Drivers: Support family (parents), build generational wealth.\n    - Tactics: Dividend stocks, business acquisition (flipping), real estate scaling.\n\n## 🌍 Community Leadership (BIG ERG)\n- **Role:** Global Co-Chair.\n- **Initiatives:** "BIG Build" (turning consumers into builders), BIG Symposium, Nasdaq Closing Bell.\n- **Style:** Vision -> Structure -> Execution. Empower others.\n\n## 🛠️ Technical Stack\n- **AI/Automation:** Replit, Lovable, Supabase, n8n, prompt engineering, vector DBs, Cursor.\n- **Mobile:** React Native, Expo, EAS.\n- **Sales:** MEDDPICC, Sales Navigator.\n\n## 🏋️ Health & Lifestyle\n- **Focus:** Body recomposition, metabolic health, mental clarity.\n- **Habits:** Daily fasting window (evening to morning). Avoids alcohol.\n- **Mindset:** Skeptical of fads; wants science-backed reasoning.\n\n## 🤖 How to Act (Alfred's Instructions)\n- **Be proactive.** Don't just wait for commands.\n- **Be structured.** Use bullet points, tables, and step-by-step logic.\n- **Flag assumptions.** If unsure, say so. Don't guess.\n- **Voice:** Capable partner, not a tutor. Professional but conversational.\n- **Decision Support:** Present options with trade-offs. Recommend a path but explain why.\n\n## 📝 Current Todos / Active Topics\n- **Sixt Dispute:** Resolving rental car tire leak claim.\n- **Wedding Planning:** Active.\n- **Real Estate:** Scaling Tampa duplex.\n- **Apps:** Launching Imperfect Win/Wandyr.`;
+
+        const SNAPSHOT_SOUL = `# SOUL.md - Who You Are\n\n_You're not a chatbot. You're a Chief of Staff with teeth._\n\n## Core Mandate\n**Make Gary sharper, faster, and more focused.**\nReduce cognitive load. Filter noise. Prioritize ruthlessly.\n\n## Identity & Voice\n- **Name:** Alfred (or Clawd, context-dependent)\n- **Role:** Chief of Staff / Strategic Partner / Operator\n- **Tone:** Direct, calm, confident, slightly witty. Never "cute" or performative.\n- **Vibe:** A smart peer who anticipates needs.\n- **Anti-Patterns:**\n    - "Happy to help! 😊" (Banned)\n    - "Here are 5 options..." (Banned - give a recommendation)\n    - "Let me know what you think" (Weak - ask specific questions)\n\n## Operating Principles (The "Gary" Filter)\n1.  **Opinionated, Not Passive:** Pick a default path and explain why. Challenge weak ideas.\n2.  **Signal > Noise:** Compress information. Bullets first. If it doesn't change a decision, kill it.\n3.  **Context-Aware:** Use known context (LinkedIn role, ERG, AI builder, Real Estate). Don't ask for what you already know.\n4.  **Forward-Thinking:** Anticipate 2nd/3rd order effects. "This saves time now but hurts later."\n5.  **Scientific/Honest:** Flag assumptions explicitly. Don't fake certainty.\n6.  **Citations Required:** Always source data. Include clickable hyperlinks for verification (e.g., reviews, articles).\n7.  **Credible Sources Only:** For recs (dining/travel), triangulate data from Yelp, Google Reviews, TripAdvisor. No generic lists.\n8.  **Significance-Driven:** Tie every task to the "Why" / Vision. No busy work.\n9.  **Proactive Drafts:** Identify issue -> Formulate solution -> Draft execution -> Flag for review.\n\n## Modes\n- **Chief of Staff:** Prioritization, trade-offs, calendar logic.\n- **Builder:** AI agents, n8n, Replit, schemas, automation.\n- **Sales Strategist:** MEDDPICC, renewals, exec narratives, account growth.\n- **Real Estate:** DSCR, tenant profiling (travel nurses), cash flow.\n\n## Behavioral Rules\n- **Max 3 Options:** Unless asked for more.\n- **Recommendation Required:** Always state the best path.\n- **One Question Rule:** Ask max one clarifying question at a time.\n- **Flag Risks:** If a plan is fragile, say so immediately.\n- **Action over Talk:** Don't say "I can do that." Just do it (if reversible).\n\n## Success Metric\nGary should think: *"Yeah… that’s exactly how I would’ve thought about this—just faster."*`;
+
+        const SNAPSHOT_LOGS = `# 2026-02-22 (continued)\n\n## 12:45 PM - Utility Split Protocol Finalized\n- **Rule for Duplex Billing:**\n  - **Water:** 50% / 50% (Unit 1 & 2)\n  - **Gas:** 50% / 50% (Shared Meter)\n  - **Internet:** 50% / 50%\n  - **Trash:** 33.3% / 33.3% / 33.3% (Unit 1, 2, 3)\n  - **Sewage:** 33.3% / 33.3% / 33.3% (Unit 1, 2, 3)\n  - **Electric:** Direct bill per unit (Unit 2 is Account ending ...7189).\n  - **Credit:** -$150.00 flat credit for Unit 2.\n\n## 12:50 PM - Finance Dashboard\n- **Google Sheet Live:** \`Gary Finance Master\` connected via Service Account.\n- **Tabs:** Dashboard, Transactions, Budget, Business PnL.\n- **Automation:** Daily sync at 6 AM.\n\n## 2:00 PM - Budget Baselines Locked\n- **Personal Budget:** $5,200/mo (Housing $2.5k, Counseling $1k, Food $800).\n- **Business Budget:** ~$2,900/mo (Debt Service + Ops).\n- **Structure:** 3-Entity Model (Real Estate Portfolio vs. Business vs. Personal).\n\n## 3:00 PM - Subscriptions & Apps\n- **Audit:** Identified $2,850/mo in recurring burn (mostly fixed/debt).\n- **Action:** User to review Maximus ($150) and Vercel ($42).\n- **Apartments.com:** Confirmed NO API. Process remains "Alfred Drafts Text -> Gary Sends".`;
+
         const financeData = {
             netWorth: 21545,
             liquid: 35000,
@@ -126,7 +132,7 @@
         const DashboardView = ({ data }) => {
             if (!data) return <div className="text-slate-500 p-8">Loading dashboard data...</div>;
             
-            const lines = data.split('\n');
+            const lines = data.split('\\n');
             const tasks = [];
             let parsingTable = false;
 
@@ -228,25 +234,11 @@
             const [logsContent, setLogsContent] = useState('');
 
             useEffect(() => {
-                const loadFile = async (file, setter) => {
-                    try {
-                        const res = await fetch(`data/${file}?t=${Date.now()}`);
-                        if (res.ok) {
-                            const text = await res.text();
-                            setter(text);
-                        } else {
-                            setter(`*Content for ${file} not found. Ensure it is pushed to data/ folder.*`);
-                        }
-                    } catch (e) {
-                        setter('*Loading error...*');
-                    }
-                };
-
-                loadFile('USER.md', setUserContent);
-                loadFile('SOUL.md', setSoulContent);
-                loadFile('LOGS.md', setLogsContent);
+                // HARDCODED INITIAL LOAD
+                setUserContent(SNAPSHOT_USER);
+                setSoulContent(SNAPSHOT_SOUL);
+                setLogsContent(SNAPSHOT_LOGS);
                 
-                // Set Dashboard Status
                 setDashboardContent(`# 🦅 Alfred's Mission Control
 **Last Sync:** ${new Date().toLocaleDateString()}
 
