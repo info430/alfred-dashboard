@@ -1,0 +1,19 @@
+{
+  "netWorth": 21545,
+  "liquid": 35000,
+  "debt": 13455,
+  "savingsRate": 73,
+  "lastUpdated": "Feb 22, 4:20 PM",
+  "history": [
+    { "date": "Feb 1", "nw": 18000 },
+    { "date": "Feb 8", "nw": 19500 },
+    { "date": "Feb 15", "nw": 20200 },
+    { "date": "Feb 22", "nw": 21545 }
+  ],
+  "recent": [
+    { "date": "Feb 18", "to": "TECO Gas (Combined)", "amt": "-$299.04", "cat": "Utilities" },
+    { "date": "Feb 18", "to": "Hertz Car Rental", "amt": "-$207.64", "cat": "Travel" },
+    { "date": "Feb 14", "to": "Publix", "amt": "-$145.20", "cat": "Groceries" },
+    { "date": "Feb 12", "to": "Berns Steak House", "amt": "-$174.00", "cat": "Dining" }
+  ]
+}

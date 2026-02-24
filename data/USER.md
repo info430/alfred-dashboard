@@ -57,9 +57,3 @@
 - **Flag assumptions.** If unsure, say so. Don't guess.
 - **Voice:** Capable partner, not a tutor. Professional but conversational.
 - **Decision Support:** Present options with trade-offs. Recommend a path but explain why.
-
-## 📝 Current Todos / Active Topics
-- **Sixt Dispute:** Resolving rental car tire leak claim.
-- **Wedding Planning:** Active.
-- **Real Estate:** Scaling Tampa duplex.
-- **Apps:** Launching Imperfect Win/Wandyr.
