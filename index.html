@@ -232,24 +232,76 @@
             </div>
         );
 
-        // --- NEW: Docs View with File List ---
-        const DocsView = ({ setActiveFile, activeFile, content }) => {
+        // --- NEW: Docs View with File List and Edit-in-Place ---
+        const DocsView = ({ setActiveFile, activeFile, content, setContent }) => {
+            const [isEditing, setIsEditing] = useState(false);
+            const [editContent, setEditContent] = useState('');
+            const [ghToken, setGhToken] = useState(localStorage.getItem('GH_PAT') || '');
+            const [statusMsg, setStatusMsg] = useState('');
+
             const files = [
-                { id: 'user', label: 'User Profile (Context)', icon: '👤' },
-                { id: 'soul', label: 'Alfred Rules (Soul)', icon: '🤖' },
-                { id: 'finance', label: 'Finance Rules', icon: '💰' },
-                { id: 'realEstate', label: 'Real Estate / Duplex', icon: '🏠' }
+                { id: 'user', label: 'User Profile (Context)', icon: '👤', path: 'data/USER.md' },
+                { id: 'soul', label: 'Alfred Rules (Soul)', icon: '🤖', path: 'data/SOUL.md' },
+                { id: 'finance', label: 'Finance Rules', icon: '💰', path: 'data/FINANCE.md' },
+                { id: 'realEstate', label: 'Real Estate / Duplex', icon: '🏠', path: 'data/REAL_ESTATE.md' }
             ];
 
-            // GitHub Edit Link Builder
-            const getEditLink = (fileKey) => {
-                const map = {
-                    'user': 'USER.md',
-                    'soul': 'SOUL.md',
-                    'finance': 'data/FINANCE.md',
-                    'realEstate': 'data/REAL_ESTATE.md'
-                };
-                return `https://github.com/info430/alfred-dashboard/edit/main/${map[fileKey] || 'USER.md'}`;
+            const activeFileInfo = files.find(f => f.id === activeFile);
+
+            // Sync content when file changes
+            useEffect(() => {
+                setEditContent(content);
+                setIsEditing(false);
+                setStatusMsg('');
+            }, [activeFile, content]);
+
+            const handleSave = async () => {
+                if (!ghToken) {
+                    const token = prompt("Please enter your GitHub Personal Access Token (PAT) with 'repo' scope to enable saving:");
+                    if (!token) return;
+                    localStorage.setItem('GH_PAT', token);
+                    setGhToken(token);
+                }
+
+                setStatusMsg('⏳ Saving to GitHub...');
+                
+                try {
+                    // 1. Get current SHA
+                    const path = activeFileInfo.path;
+                    const repo = "info430/alfred-dashboard";
+                    const getRes = await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
+                        headers: { "Authorization": `token ${localStorage.getItem('GH_PAT')}` }
+                    });
+                    
+                    if (!getRes.ok) throw new Error("Failed to fetch file info. Check Token.");
+                    const getData = await getRes.json();
+                    
+                    // 2. Commit Update
+                    const putRes = await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
+                        method: "PUT",
+                        headers: {
+                            "Authorization": `token ${localStorage.getItem('GH_PAT')}`,
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            message: `Update ${path} via Dashboard`,
+                            content: btoa(unescape(encodeURIComponent(editContent))), // Handle UTF-8
+                            sha: getData.sha
+                        })
+                    });
+
+                    if (!putRes.ok) throw new Error("Failed to commit update.");
+                    
+                    setStatusMsg('✅ Saved! Changes will live update shortly.');
+                    setIsEditing(false);
+                    // Optimistic update locally? We need to bubble this up if we want it to stick in session
+                    // For now, page refresh or parent update handles it.
+                    
+                } catch (err) {
+                    console.error(err);
+                    setStatusMsg(`❌ Error: ${err.message}`);
+                    if (err.message.includes('Token')) localStorage.removeItem('GH_PAT');
+                }
             };
 
             return (
@@ -276,17 +328,44 @@
 
                     {/* Right Content Area */}
                     <div className="flex-1 bg-navy-800/30 rounded-xl border border-slate-700/30 relative flex flex-col overflow-hidden">
-                        <div className="absolute top-4 right-4 z-20">
-                            <a 
-                                href={getEditLink(activeFile)} 
-                                target="_blank"
-                                className="flex items-center gap-2 px-3 py-1.5 bg-navy-900 border border-slate-600 rounded text-xs text-slate-300 hover:text-white hover:border-accent-blue transition-colors"
-                            >
-                                ✏️ Edit on GitHub
-                            </a>
+                        <div className="absolute top-4 right-4 z-20 flex gap-2 items-center">
+                            {statusMsg && <span className="text-xs text-slate-300 bg-navy-900 px-2 py-1 rounded border border-slate-600">{statusMsg}</span>}
+                            
+                            {!isEditing ? (
+                                <button 
+                                    onClick={() => setIsEditing(true)}
+                                    className="flex items-center gap-2 px-3 py-1.5 bg-navy-900 border border-slate-600 rounded text-xs text-slate-300 hover:text-white hover:border-accent-blue transition-colors"
+                                >
+                                    ✏️ Edit
+                                </button>
+                            ) : (
+                                <>
+                                    <button 
+                                        onClick={() => setIsEditing(false)}
+                                        className="px-3 py-1.5 bg-red-900/50 border border-red-700/50 rounded text-xs text-red-200 hover:bg-red-900"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button 
+                                        onClick={handleSave}
+                                        className="px-3 py-1.5 bg-green-600 border border-green-500 rounded text-xs text-white hover:bg-green-500 font-bold"
+                                    >
+                                        💾 Save Changes
+                                    </button>
+                                </>
+                            )}
                         </div>
+                        
                         <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
-                            <div className="prose prose-invert prose-sm max-w-none" dangerouslySetInnerHTML={{__html: marked.parse(content || '')}}></div>
+                            {isEditing ? (
+                                <textarea 
+                                    className="w-full h-full bg-navy-900/50 text-slate-300 font-mono text-sm p-4 rounded-lg border border-slate-700 focus:border-accent-blue focus:outline-none resize-none"
+                                    value={editContent}
+                                    onChange={(e) => setEditContent(e.target.value)}
+                                />
+                            ) : (
+                                <div className="prose prose-invert prose-sm max-w-none" dangerouslySetInnerHTML={{__html: marked.parse(content || '')}}></div>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -328,6 +407,13 @@
                                 activeFile={activeDoc} 
                                 setActiveFile={setActiveDoc} 
                                 content={SNAPSHOT_DATA[activeDoc]} 
+                                setContent={(newContent) => {
+                                    SNAPSHOT_DATA[activeDoc] = newContent;
+                                    // Trigger re-render by toggling activeDoc or state? 
+                                    // React state update is cleaner.
+                                    // But SNAPSHOT_DATA is const. Let's make it state-backed if we want instant preview.
+                                    // For now, this is enough to let the child update itself.
+                                }}
                             />
                         )}
                         {activeTab === 'logs' && <MarkdownView title="Activity Log (Memory)" content={logsContent} />}
