@@ -2,23 +2,31 @@
 
 ## 🌍 The Map
 - **💰 Finance:** `finance/RULES.md`
-- **🏠 Real Estate:** `real_estate/DUPLEX_TAMPA.md`
+- **🏠 Real Estate:** `data/memory/REAL_ESTATE_PORTFOLIO.md`
 - **🚀 Projects:**
     - `projects/IMPERFECT_WIN.md`
     - `projects/WANDYR.md`
     - `projects/DASHBOARD.md`
-- **💍 Personal:**
-    - `personal/WEDDING.md`
-    - `personal/HEALTH.md`
+    - `data/memory/BUSINESS_PLAN.md` (@openclaw_ops)
+- **💍 Personal:** `personal/WEDDING.md`
 - **🤝 Community:** `community/BIG_ERG.md`
 - **👔 Career:** `career/LINKEDIN.md`
 
-## 🚦 Active Priorities
-1.  **Revenue:** Secure DSCR Loan term sheet (Easy Street Capital).
-2.  **Ops:** Automate daily finance briefing (Active).
-3.  **Tenant:** Send Feb Utility Bill (Text Draft Ready).
+## 🧠 Strategic Context (Latest)
+- **Base Salary Budget:** Living on $106k base ($5,300/mo net).
+    - **Rule:** Commissions go 100% to Debt ($13k), then 100% to Liquidity.
+- **Immediate Move:** Deploy $5,600 check (Feb 26) to Amex Platinum.
+- **Portfolio Reality:**
+    - **Tampa Duplex:** Bleeding -$571/mo (Unit 2 Vacant).
+    - **Other Duplex:** Cash flowing +$722/mo.
+    - **Net:** +$151/mo.
+    - **Priority:** Fill Tampa Unit 2 ($1,995/mo) to unlock wealth.
 
 ## 🤖 System Status
-- **Dashboard:** `info430.github.io` (Live).
-- **Google Sheet:** `Gary Finance Master` (Live).
-- **AgentMail:** Active (Scanning for Bills).
+- **Dashboard:** `info430.github.io` (Edit-in-Place Active).
+- **Automation:** Cron jobs active for Daily Briefing, News Monitor, Weekly Scorecard.
+- **Blockers:** X API Keys needed for Business Challenge launch.
+
+## 💾 Backup Protocol
+- **Repo:** `alfred-dashboard` (Private).
+- **Sync:** Auto-commits active.
