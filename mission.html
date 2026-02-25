@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gary Ellis | Mission Control</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Theme Colors */
+            --bg-primary: #050508;
+            --bg-card: rgba(20, 20, 25, 0.6);
+            --bg-glass: rgba(10, 10, 15, 0.7);
+            
+            --text-main: #ffffff;
+            --text-muted: #94a3b8;
+            --text-dim: #475569;
+            
+            --accent: #6366f1; /* Electric Indigo */
+            --accent-glow: rgba(99, 102, 241, 0.4);
+            --accent-dim: rgba(99, 102, 241, 0.1);
+            
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --border-highlight: rgba(255, 255, 255, 0.15);
+            
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            
+            /* Spacing & Layout */
+            --header-height: 70px;
+            --max-width: 1600px;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+        }
+
+        * { box-sizing: border-box; outline: none; }
+        
+        body {
+            margin: 0;
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(99, 102, 241, 0.08) 0%, transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(16, 185, 129, 0.05) 0%, transparent 25%);
+            min-height: 100vh;
+        }
+
+        /* --- Animations --- */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+            70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        .animate-up { animation: fadeInUp 0.5s ease-out forwards; opacity: 0; }
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+
+        /* --- Header --- */
+        header {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: var(--header-height);
+            background: var(--bg-glass);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-subtle);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2.5rem;
+        }
+
+        .logo {
+            font-weight: 700;
+            font-size: 1.25rem;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo-icon {
+            width: 32px; height: 32px;
+            background: linear-gradient(135deg, var(--accent), #8b5cf6);
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 4px;
+            background: rgba(255,255,255,0.03);
+            padding: 4px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-subtle);
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            padding: 8px 24px;
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn:hover { color: var(--text-main); background: rgba(255,255,255,0.05); }
+        .nav-btn.active { background: var(--accent-dim); color: var(--accent); }
+
+        .header-right { display: flex; align-items: center; gap: 20px; }
+        
+        .live-status {
+            display: flex; align-items: center; gap: 8px;
+            font-size: 0.8rem; color: var(--text-muted);
+            background: rgba(255,255,255,0.03);
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: 1px solid var(--border-subtle);
+        }
+        
+        .status-dot {
+            width: 8px; height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        /* --- Main Layout --- */
+        main {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: calc(var(--header-height) + 2.5rem) 2.5rem 2.5rem;
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* --- Dashboard --- */
+        .welcome-bar {
+            margin-bottom: 2rem;
+            display: flex; justify-content: space-between; align-items: end;
+        }
+        .welcome-bar h1 { margin: 0; font-size: 2rem; font-weight: 600; }
+        .date-display { font-family: 'Monaco', monospace; color: var(--accent); font-size: 0.9rem; opacity: 0.8; }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        
+        .card:hover { border-color: var(--border-highlight); transform: translateY(-2px); }
+        .card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+            background: var(--accent); opacity: 0.5;
+        }
+        .card.card-success::before { background: var(--success); }
+        .card.card-warn::before { background: var(--warning); }
+
+        .metric-label { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 0.5rem; display: flex; justify-content: space-between; }
+        .metric-value { font-size: 2.2rem; font-weight: 700; color: var(--text-main); margin-bottom: 0.25rem; }
+        .metric-trend { font-size: 0.85rem; color: var(--success); display: flex; align-items: center; gap: 4px; }
+        .metric-trend.down { color: var(--danger); }
+
+        .dashboard-split {
+            display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem;
+        }
+
+        .section-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 1rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 0.75rem;
+        }
+        .section-title { font-size: 1.1rem; font-weight: 600; color: var(--text-main); }
+
+        /* Priorities List */
+        .priority-list { list-style: none; padding: 0; margin: 0; }
+        .priority-item {
+            display: flex; align-items: center; gap: 12px;
+            padding: 12px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            margin-bottom: 0.75rem;
+            transition: background 0.2s;
+        }
+        .priority-item:hover { background: rgba(255,255,255,0.04); }
+        
+        .priority-check {
+            appearance: none; width: 20px; height: 20px;
+            border: 2px solid var(--text-muted); border-radius: 6px;
+            cursor: pointer; position: relative;
+        }
+        .priority-check:checked { background: var(--accent); border-color: var(--accent); }
+        .priority-check:checked::after {
+            content: '✓'; position: absolute; color: white; font-size: 12px; left: 4px; top: 0px;
+        }
+        .priority-text { flex: 1; font-size: 0.95rem; }
+        .priority-text[contenteditable]:focus { background: rgba(0,0,0,0.2); outline: none; }
+
+        /* Activity Feed */
+        .activity-feed { max-height: 400px; overflow-y: auto; padding-right: 8px; }
+        .activity-item {
+            padding: 12px 0; border-bottom: 1px solid var(--border-subtle);
+            display: flex; gap: 12px; font-size: 0.9rem;
+        }
+        .activity-time { color: var(--text-dim); font-size: 0.8rem; min-width: 60px; }
+        .activity-content { color: var(--text-muted); }
+        .activity-highlight { color: var(--accent); font-weight: 500; }
+
+        /* --- Projects (Kanban) --- */
+        .kanban-board {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;
+            height: calc(100vh - 180px);
+        }
+        .kanban-col {
+            background: rgba(20, 20, 25, 0.4);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-subtle);
+            display: flex; flex-direction: column;
+        }
+        .kanban-header {
+            padding: 1.25rem; border-bottom: 1px solid var(--border-subtle);
+            font-weight: 600; display: flex; justify-content: space-between;
+        }
+        .col-count { background: var(--bg-primary); padding: 2px 8px; border-radius: 12px; font-size: 0.8rem; color: var(--text-muted); }
+        
+        .kanban-body {
+            padding: 1rem; overflow-y: auto; flex: 1;
+            display: flex; flex-direction: column; gap: 1rem;
+        }
+        
+        .task-card {
+            background: var(--bg-card);
+            padding: 1rem; border-radius: var(--radius-md);
+            border: 1px solid var(--border-subtle);
+            cursor: grab;
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+        .task-card:hover { border-color: var(--accent-dim); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        .task-card:active { cursor: grabbing; transform: scale(0.98); }
+        
+        .task-tag {
+            font-size: 0.7rem; padding: 2px 8px; border-radius: 4px;
+            text-transform: uppercase; font-weight: 700; margin-bottom: 8px; display: inline-block;
+        }
+        .tag-high { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
+        .tag-med { background: rgba(245, 158, 11, 0.2); color: #fcd34d; }
+        .tag-low { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; }
+        
+        .task-title { font-weight: 500; margin-bottom: 0.5rem; line-height: 1.4; }
+        .task-meta { font-size: 0.8rem; color: var(--text-dim); display: flex; justify-content: space-between; }
+
+        .add-task-btn {
+            background: transparent; border: 1px dashed var(--border-subtle);
+            color: var(--text-muted); width: 100%; padding: 12px;
+            border-radius: var(--radius-md); cursor: pointer; margin-top: 8px;
+            transition: all 0.2s;
+        }
+        .add-task-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+
+        /* --- Timeline --- */
+        .timeline-container { max-width: 900px; margin: 0 auto; position: relative; }
+        .timeline-line {
+            position: absolute; left: 24px; top: 0; bottom: 0; width: 2px;
+            background: linear-gradient(to bottom, var(--accent), var(--bg-primary));
+        }
+        .phase-card {
+            margin-left: 60px; margin-bottom: 3rem;
+            position: relative;
+        }
+        .phase-node {
+            position: absolute; left: -43px; top: 0;
+            width: 14px; height: 14px; background: var(--bg-primary);
+            border: 2px solid var(--accent); border-radius: 50%;
+            z-index: 2; box-shadow: 0 0 0 4px var(--bg-primary);
+        }
+        .phase-active .phase-node { background: var(--accent); box-shadow: 0 0 15px var(--accent); }
+        
+        .phase-content {
+            background: var(--bg-card); padding: 2rem; border-radius: var(--radius-lg);
+            border: 1px solid var(--border-subtle);
+        }
+        .phase-active .phase-content { border-color: var(--accent); box-shadow: 0 0 30px rgba(99, 102, 241, 0.05); }
+        
+        .phase-header { display: flex; justify-content: space-between; margin-bottom: 1rem; border-bottom: 1px solid var(--border-subtle); padding-bottom: 1rem; }
+        .phase-title { font-size: 1.2rem; font-weight: 700; color: var(--text-main); }
+        .phase-date { color: var(--accent); font-family: monospace; }
+        
+        .milestone-list { list-style: none; padding: 0; margin-top: 1rem; }
+        .milestone-item { display: flex; gap: 12px; margin-bottom: 8px; align-items: start; color: var(--text-muted); }
+        .milestone-icon { color: var(--success); }
+
+        /* --- Notes --- */
+        .notes-wrapper { height: calc(100vh - 200px); display: flex; flex-direction: column; }
+        .notes-header { display: flex; justify-content: space-between; margin-bottom: 1rem; color: var(--text-dim); font-size: 0.9rem; }
+        .notes-editor {
+            flex: 1; background: var(--bg-card); border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg); padding: 2rem;
+            color: var(--text-main); font-family: 'Inter', sans-serif; font-size: 1rem; line-height: 1.6;
+            resize: none;
+        }
+        .notes-editor:focus { border-color: var(--accent); }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-primary); }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+        @media (max-width: 768px) {
+            .kanban-board { grid-template-columns: 1fr; }
+            .dashboard-split { grid-template-columns: 1fr; }
+            header { padding: 0 1rem; }
+            .nav-btn { padding: 8px 12px; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">
+        <div class="logo-icon">🦅</div>
+        <span>ALFRED OPS</span>
+    </div>
+    
+    <nav class="nav-tabs">
+        <button class="nav-btn active" onclick="switchTab('dashboard')">Dashboard</button>
+        <button class="nav-btn" onclick="switchTab('projects')">Projects</button>
+        <button class="nav-btn" onclick="switchTab('timeline')">Timeline</button>
+        <button class="nav-btn" onclick="switchTab('notes')">Notes</button>
+    </nav>
+
+    <div class="header-right">
+        <div class="live-status">
+            <div class="status-dot"></div>
+            <span id="system-status">SYSTEM ONLINE</span>
+        </div>
+    </div>
+</header>
+
+<main>
+    <!-- DASHBOARD TAB -->
+    <div id="dashboard" class="tab-content active animate-up">
+        <div class="welcome-bar">
+            <div>
+                <h1 id="greeting">Good Morning, Gary</h1>
+                <div style="color: var(--text-muted); margin-top: 4px;">Chief of Staff Mode • LinkedIn Sales Solutions</div>
+            </div>
+            <div class="date-display" id="live-clock">--:--:--</div>
+        </div>
+
+        <!-- Metrics -->
+        <div class="metrics-grid">
+            <!-- Goal Metric -->
+            <div class="card card-success delay-1">
+                <div class="metric-label">
+                    <span>Portfolio Cash Flow</span>
+                    <i style="opacity:0.5">💰</i>
+                </div>
+                <div class="metric-value">$1,151<span style="font-size:1rem;color:var(--text-dim)">/mo</span></div>
+                <div class="metric-trend">
+                    <span>Target: $10,000/mo</span>
+                </div>
+                <div style="margin-top:12px; height:4px; background:rgba(255,255,255,0.1); border-radius:2px; overflow:hidden;">
+                    <div style="width: 11.5%; height:100%; background:var(--success);"></div>
+                </div>
+            </div>
+
+            <!-- Net Worth -->
+            <div class="card delay-2">
+                <div class="metric-label">
+                    <span>Tracked Net Worth</span>
+                    <i style="opacity:0.5">📈</i>
+                </div>
+                <div class="metric-value">$21,562</div>
+                <div class="metric-trend">
+                    <span>🔺 +$1,345 this week</span>
+                </div>
+            </div>
+
+            <!-- Active Projects -->
+            <div class="card card-warn delay-3">
+                <div class="metric-label">
+                    <span>Active Projects</span>
+                    <i style="opacity:0.5">🚀</i>
+                </div>
+                <div class="metric-value" id="project-count">3</div>
+                <div class="metric-trend">
+                    <span>High Priority</span>
+                </div>
+            </div>
+
+            <!-- Countdown -->
+            <div class="card delay-1">
+                <div class="metric-label">
+                    <span>Days to 2026</span>
+                    <i style="opacity:0.5">⏳</i>
+                </div>
+                <div class="metric-value" id="countdown">--</div>
+                <div class="metric-trend">
+                    <span>Accumulation Phase</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-split">
+            <!-- Top Priorities -->
+            <div class="card animate-up delay-2">
+                <div class="section-header">
+                    <span class="section-title">🛑 Top Priorities (Chief of Staff)</span>
+                    <button onclick="addPriority()" style="background:none; border:none; color:var(--accent); cursor:pointer;">+ Add</button>
+                </div>
+                <ul class="priority-list" id="priority-list">
+                    <!-- Populated by JS -->
+                </ul>
+            </div>
+
+            <!-- Activity Feed -->
+            <div class="card animate-up delay-3">
+                <div class="section-header">
+                    <span class="section-title">📝 Recent Activity</span>
+                </div>
+                <div class="activity-feed" id="activity-feed">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PROJECTS TAB -->
+    <div id="projects" class="tab-content">
+        <div class="kanban-board">
+            <!-- Backlog -->
+            <div class="kanban-col">
+                <div class="kanban-header">
+                    Backlog <span class="col-count" id="count-backlog">0</span>
+                </div>
+                <div class="kanban-body" id="col-backlog" ondrop="drop(event)" ondragover="allowDrop(event)">
+                    <!-- Items -->
+                </div>
+                <button class="add-task-btn" onclick="addTask('backlog')">+ Add Task</button>
+            </div>
+
+            <!-- In Progress -->
+            <div class="kanban-col">
+                <div class="kanban-header" style="border-color: var(--accent);">
+                    In Progress <span class="col-count" id="count-progress">0</span>
+                </div>
+                <div class="kanban-body" id="col-progress" ondrop="drop(event)" ondragover="allowDrop(event)">
+                    <!-- Items -->
+                </div>
+                <button class="add-task-btn" onclick="addTask('progress')">+ Add Task</button>
+            </div>
+
+            <!-- Done -->
+            <div class="kanban-col">
+                <div class="kanban-header" style="border-color: var(--success);">
+                    Done <span class="col-count" id="count-done">0</span>
+                </div>
+                <div class="kanban-body" id="col-done" ondrop="drop(event)" ondragover="allowDrop(event)">
+                    <!-- Items -->
+                </div>
+                <button class="add-task-btn" onclick="addTask('done')">+ Add Task</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TIMELINE TAB -->
+    <div id="timeline" class="tab-content">
+        <div class="timeline-container" id="timeline-container">
+            <div class="timeline-line"></div>
+            <!-- Phases injected by JS -->
+        </div>
+    </div>
+
+    <!-- NOTES TAB -->
+    <div id="notes" class="tab-content">
+        <div class="notes-wrapper">
+            <div class="notes-header">
+                <span>SCRATCHPAD.MD</span>
+                <span id="notes-status">Saved</span>
+            </div>
+            <textarea class="notes-editor" id="notes-area" placeholder="Start typing... Markdown supported."></textarea>
+        </div>
+    </div>
+</main>
+
+<script>
+    // --- Data & State ---
+    const DEFAULT_DATA = {
+        priorities: [
+            { text: "Secure DSCR Loan Term Sheet (Easy Street Capital)", done: false },
+            { text: "Fill Tampa Unit 2 (Target: $1,995/mo)", done: false },
+            { text: "Pay $5,600 to Amex Platinum (Mar 27)", done: false }
+        ],
+        tasks: [
+            { id: 't1', title: 'Launch "Blueprint" Product', tag: 'low', col: 'backlog' },
+            { id: 't2', title: 'Wandyr App MVP Scope', tag: 'med', col: 'backlog' },
+            { id: 't3', title: 'Automate Google Calendar', tag: 'high', col: 'progress' },
+            { id: 't4', title: 'Rewrite Rental Listing', tag: 'high', col: 'progress' },
+            { id: 't5', title: 'Dashboard Edit-in-Place', tag: 'med', col: 'done' },
+            { id: 't6', title: 'Amex Payoff Plan', tag: 'high', col: 'done' }
+        ],
+        notes: "# Notes\n\n- **Wealth Rule:** Commissions -> Debt -> Assets.\n- **Focus:** Stop the 'Car Rental' bleed.\n- **Next Trip:** Plan Tampa logistics early.",
+        activity: [
+            { time: '11:45 AM', text: 'Real Estate Portfolio audit complete' },
+            { time: '11:30 AM', text: 'Budget baseline established ($5,300/mo)' },
+            { time: '09:00 AM', text: 'Calendar API integration active' },
+            { time: '08:00 AM', text: 'Chief of Staff Operating System loaded' }
+        ]
+    };
+
+    const TIMELINE_DATA = [
+        {
+            title: "Phase 1: Stabilization",
+            date: "NOW - MAR 2026",
+            active: true,
+            milestones: ["Pay off Credit Card Debt ($13k)", "Fill Tampa Unit 2 Vacancy", "Secure DSCR Refi Term Sheet"]
+        },
+        {
+            title: "Phase 2: Accumulation",
+            date: "APR 2026 - DEC 2026",
+            active: false,
+            milestones: ["Launch 'Blueprint' Revenue Stream", "Build $50k Liquidity Reserve", "Wandyr Beta Launch"]
+        },
+        {
+            title: "Phase 3: Acceleration",
+            date: "2027 AND BEYOND",
+            active: false,
+            milestones: ["Acquire Property #3 (10+ Units)", "Replace 50% of W2 Income", "Full Financial Autonomy"]
+        }
+    ];
+
+    // --- App Logic ---
+    const App = {
+        data: JSON.parse(localStorage.getItem('alfred_data')) || DEFAULT_DATA,
+
+        async init() {
+            await this.fetchLiveSync();
+            this.renderPriorities();
+            this.renderTasks();
+            this.renderTimeline();
+            this.renderActivity();
+            this.initNotes();
+            this.updateClock();
+            
+            // Welcome msg based on time
+            const hour = new Date().getHours();
+            const greet = hour < 12 ? 'Good Morning' : hour < 18 ? 'Good Afternoon' : 'Good Evening';
+            document.getElementById('greeting').textContent = `${greet}, Gary`;
+            
+            setInterval(() => this.updateClock(), 1000);
+        },
+
+        async fetchLiveSync() {
+            try {
+                const res = await fetch('data/dashboard_data.json?t=' + Date.now());
+                if (!res.ok) throw new Error("No sync file");
+                const remote = await res.json();
+                
+                // Merge Remote Metrics
+                if(remote.metrics) {
+                    document.querySelector('.metric-value:nth-child(2)').textContent = `$${remote.metrics.net_worth.toLocaleString()}`;
+                    document.getElementById('countdown').textContent = remote.metrics.days_left;
+                }
+                
+                // Merge Priorities if remote has them
+                if(remote.priorities && remote.priorities.length > 0) {
+                    // We overwrite local priorities with remote to ensure sync
+                    this.data.priorities = remote.priorities;
+                }
+
+                // Merge Activity
+                if(remote.activity) {
+                    this.data.activity = remote.activity;
+                }
+                
+                this.save();
+                console.log("✅ Live Sync Complete");
+            } catch (e) {
+                console.log("⚠️ Running in offline mode (using localStorage)");
+            }
+        },
+
+        save() {
+            localStorage.setItem('alfred_data', JSON.stringify(this.data));
+        },
+
+        // --- Dashboard ---
+        updateClock() {
+            const now = new Date();
+            document.getElementById('live-clock').textContent = now.toLocaleDateString('en-US', { 
+                weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' 
+            });
+        },
+
+        renderActivity() {
+            const container = document.getElementById('activity-feed');
+            container.innerHTML = this.data.activity.map(item => `
+                <div class="activity-item">
+                    <div class="activity-time">${item.time}</div>
+                    <div class="activity-content">${item.text}</div>
+                </div>
+            `).join('');
+        },
+
+        // --- Priorities ---
+        renderPriorities() {
+            const list = document.getElementById('priority-list');
+            list.innerHTML = this.data.priorities.map((p, i) => `
+                <li class="priority-item">
+                    <input type="checkbox" class="priority-check" ${p.done ? 'checked' : ''} onchange="App.togglePriority(${i})">
+                    <span class="priority-text" contenteditable="true" onblur="App.updatePriorityText(${i}, this.textContent)" 
+                          style="${p.done ? 'text-decoration:line-through; opacity:0.5' : ''}">${p.text}</span>
+                    <button onclick="App.deletePriority(${i})" style="background:none;border:none;cursor:pointer;opacity:0.3">×</button>
+                </li>
+            `).join('');
+        },
+
+        togglePriority(idx) {
+            this.data.priorities[idx].done = !this.data.priorities[idx].done;
+            this.save(); this.renderPriorities();
+        },
+        
+        updatePriorityText(idx, text) {
+            this.data.priorities[idx].text = text;
+            this.save();
+        },
+
+        addPriority() {
+            this.data.priorities.unshift({ text: "New Priority", done: false });
+            this.save(); this.renderPriorities();
+        },
+        
+        deletePriority(idx) {
+            this.data.priorities.splice(idx, 1);
+            this.save(); this.renderPriorities();
+        },
+
+        // --- Kanban ---
+        renderTasks() {
+            ['backlog', 'progress', 'done'].forEach(col => {
+                const items = this.data.tasks.filter(t => t.col === col);
+                document.getElementById(`count-${col}`).textContent = items.length;
+                document.getElementById(`col-${col}`).innerHTML = items.map(t => `
+                    <div class="task-card" draggable="true" ondragstart="drag(event)" id="${t.id}" onclick="App.editTask('${t.id}')">
+                        <span class="task-tag tag-${t.tag}">${t.tag}</span>
+                        <div class="task-title">${t.title}</div>
+                    </div>
+                `).join('');
+            });
+            // Update Active Project metric
+            document.getElementById('project-count').textContent = this.data.tasks.filter(t => t.col === 'progress').length;
+        },
+
+        addTask(col) {
+            const title = prompt("Task Title:");
+            if(title) {
+                this.data.tasks.push({ 
+                    id: 't' + Date.now(), 
+                    title, 
+                    tag: 'med', 
+                    col 
+                });
+                this.save(); this.renderTasks();
+            }
+        },
+
+        editTask(id) {
+            // Simple delete for prototype, or prompt rename
+            // For robust ux, let's just allow rename/delete
+            const task = this.data.tasks.find(t => t.id === id);
+            if(confirm(`Delete "${task.title}"?`)) {
+                this.data.tasks = this.data.tasks.filter(t => t.id !== id);
+                this.save(); this.renderTasks();
+            }
+        },
+
+        // --- Timeline ---
+        renderTimeline() {
+            const container = document.getElementById('timeline-container');
+            // Keep line
+            container.innerHTML = '<div class="timeline-line"></div>' + TIMELINE_DATA.map(phase => `
+                <div class="phase-card ${phase.active ? 'phase-active animate-up' : ''}">
+                    <div class="phase-node"></div>
+                    <div class="phase-content">
+                        <div class="phase-header">
+                            <span class="phase-title">${phase.title}</span>
+                            <span class="phase-date">${phase.date}</span>
+                        </div>
+                        <ul class="milestone-list">
+                            ${phase.milestones.map(m => `
+                                <li class="milestone-item">
+                                    <span class="milestone-icon">✓</span> ${m}
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                </div>
+            `).join('');
+        },
+
+        // --- Notes ---
+        initNotes() {
+            const area = document.getElementById('notes-area');
+            area.value = this.data.notes;
+            area.addEventListener('input', () => {
+                this.data.notes = area.value;
+                this.save();
+                document.getElementById('notes-status').textContent = 'Saving...';
+                setTimeout(() => document.getElementById('notes-status').textContent = 'Saved', 1000);
+            });
+        }
+    };
+
+    // --- Drag & Drop (Simple) ---
+    function allowDrop(ev) { ev.preventDefault(); }
+    function drag(ev) { ev.dataTransfer.setData("text", ev.target.id); }
+    function drop(ev) {
+        ev.preventDefault();
+        const id = ev.dataTransfer.getData("text");
+        const colId = ev.currentTarget.id.replace('col-', '');
+        
+        // Update data
+        const task = App.data.tasks.find(t => t.id === id);
+        if (task) {
+            task.col = colId;
+            App.save();
+            App.renderTasks();
+        }
+    }
+
+    // --- Tab Switching ---
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        
+        document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+        event.target.classList.add('active');
+    }
+
+    // Keybinds
+    document.addEventListener('keydown', (e) => {
+        if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+            e.preventDefault();
+            alert("Global Search (Coming Soon)");
+        }
+    });
+
+    // Boot
+    App.init();
+
+</script>
+</body>
+</html>
