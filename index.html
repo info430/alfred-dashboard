@@ -789,7 +789,7 @@
 
         // ── SYSTEM VIEW ────────────────────────────────────────────────────────
         const SystemView = () => {
-            const LITELLM_UI = 'https://chapter-draw-applied-genius.trycloudflare.com';
+            const LITELLM_UI = 'https://litellm.wandyr.app';
             const STATUS_API = 'https://paso-brief-rocky-capture.trycloudflare.com';
             const [health, setHealth] = React.useState(null);
             const [loading, setLoading] = React.useState(true);
@@ -949,7 +949,7 @@
                                 { label: 'Cloudflare Tunnel', status: '✅ Active', detail: 'trycloudflare.com (quick)' },
                                 { label: 'Watchdog', status: '✅ Active', detail: 'Auto-restarts on crash' },
                                 { label: 'Cron (reboot)', status: '✅ Configured', detail: 'LiteLLM + tunnel on boot' },
-                                { label: 'Named CF Tunnel', status: '⏳ Pending', detail: 'Awaiting Cloudflare API token' },
+                                { label: 'Named CF Tunnel', status: '✅ Active', detail: 'litellm.wandyr.app (permanent)' },
                             ].map(item => (
                                 <div key={item.label} className="bg-navy-900/50 p-3 rounded-lg flex items-start gap-3">
                                     <div className="flex-1">
