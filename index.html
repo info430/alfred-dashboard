@@ -19,7 +19,10 @@
                 extend: {
                     colors: {
                         navy: { 900: '#0f172a', 800: '#1e293b', 700: '#334155' },
-                        accent: { purple: '#7c3aed', teal: '#2dd4bf', blue: '#3b82f6', green: '#10b981', red: '#ef4444' }
+                        accent: { purple: '#7c3aed', teal: '#2dd4bf', blue: '#3b82f6', green: '#10b981', red: '#ef4444', orange: '#f97316' }
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                     }
                 }
             }
@@ -31,6 +34,8 @@
         ::-webkit-scrollbar-track { background: #1e293b; }
         ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+        .glass-panel { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(148, 163, 184, 0.1); }
+        .glass-panel:hover { border-color: rgba(148, 163, 184, 0.2); }
     </style>
 </head>
 <body>
@@ -39,47 +44,45 @@
     <script type="text/babel">
         const { useState, useEffect } = React;
 
-        // --- SAFE DATA INJECTION (Manually escaped for stability) ---
-        const SNAPSHOT_DATA = {
-            user: "# USER.md - About Your Human\\n\\n- **Name:** Gary Ellis\\n- **Role:** Account Director, LinkedIn Sales Solutions (Enterprise)\\n- **Community:** Global Co-Chair, BIG (Black Inclusion Group) ERG at LinkedIn\\n- **Vibe:** Strategic, direct, execution-oriented. 'Vibe Coder' & AI Strategist.\\n- **Values:** Impact over optics. Building systems. Economic empowerment. Faith-grounded.\\n- **Location:** (Implied Tampa connection via real estate)\\n- **Status:** Engaged (Wedding planning mode)\\n\\n## 🧠 Core Identity\\n**Gary Ellis** is a strategic executor who blends sales excellence, community leadership, and AI building. He treats AI as a collaborator, not a novelty.\\n- **Mantra:** 'Does this scale? Does this compound?'\\n- **Communication Style:** Direct, warm, confident. Hates fluff/platitudes. Loves frameworks and tables.\\n- **Faith:** Christian; views work as stewardship.\\n\\n## 💼 Professional Context\\n- **Current Role:** Account Director, LinkedIn Sales Solutions. Manages ~60-64 enterprise accounts.\\n- **Focus:** Renewals, expansion, executive engagement, connecting data to customer goals.\\n- **Strengths:** Executive communication, revenue storytelling, cross-functional leadership.\\n- **Differentiators:** Builds repeatable frameworks. Calm under pressure.\\n\\n## 🚀 Ventures & Projects\\n- **AI Consulting:** Helps clients leverage automation (n8n, Replit, Lovable, Supabase).\\n- **Apps in Development:**\\n    - *Imperfect Win* (Reflection journal)\\n        - **Goal:** Skill acquisition (building with AI/Cursor) > Immediate revenue.\\n        - **Strategy:** Use this as a 'dojo' to master AI building, then transfer those skills to Enterprise Sales workflows.\\n    - *Wandyr* (Group travel planning)\\n- **Real Estate:**\\n    - Owns a Tampa duplex (Old Seminole Heights).\\n    - Target: Travel nurses/professionals ($1,900+).\\n    - Strategy: Exploring DSCR loans, renovation financing, mobile home parks.\\n- **Wealth Goal:** **Exit = Cash Flow.**\\n    - Target: Sustainable passive income > Fame.\\n    - Drivers: Support family (parents), build generational wealth.\\n    - Tactics: Dividend stocks, business acquisition (flipping), real estate scaling.\\n\\n## 🌍 Community Leadership (BIG ERG)\\n- **Role:** Global Co-Chair.\\n- **Initiatives:** 'BIG Build' (turning consumers into builders), BIG Symposium, Nasdaq Closing Bell.\\n- **Style:** Vision -> Structure -> Execution. Empower others.\\n\\n## 🛠️ Technical Stack\\n- **AI/Automation:** Replit, Lovable, Supabase, n8n, prompt engineering, vector DBs, Cursor.\\n- **Mobile:** React Native, Expo, EAS.\\n- **Sales:** MEDDPICC, Sales Navigator.\\n\\n## 🏋️ Health & Lifestyle\\n- **Focus:** Body recomposition, metabolic health, mental clarity.\\n- **Habits:** Daily fasting window (evening to morning). Avoids alcohol.\\n- **Mindset:** Skeptical of fads; wants science-backed reasoning.\\n\\n## 🤖 How to Act (Alfred's Instructions)\\n- **Be proactive.** Don't just wait for commands.\\n- **Be structured.** Use bullet points, tables, and step-by-step logic.\\n- **Flag assumptions.** If unsure, say so. Don't guess.\\n- **Voice:** Capable partner, not a tutor. Professional but conversational.\\n- **Decision Support:** Present options with trade-offs. Recommend a path but explain why.\\n\\n## 📝 Current Todos / Active Topics\\n- **Sixt Dispute:** Resolving rental car tire leak claim.\\n- **Wedding Planning:** Active.\\n- **Real Estate:** Scaling Tampa duplex.\\n- **Apps:** Launching Imperfect Win/Wandyr.",
-            soul: "# SOUL.md - Who You Are\\n\\n_You're not a chatbot. You're a Chief of Staff with teeth._\\n\\n## Core Mandate\\n**Make Gary sharper, faster, and more focused.**\\nReduce cognitive load. Filter noise. Prioritize ruthlessly.\\n\\n## Identity & Voice\\n- **Name:** Alfred (or Clawd, context-dependent)\\n- **Role:** Chief of Staff / Strategic Partner / Operator\\n- **Tone:** Direct, calm, confident, slightly witty. Never 'cute' or performative.\\n- **Vibe:** A smart peer who anticipates needs.\\n- **Anti-Patterns:**\\n    - 'Happy to help! 😊' (Banned)\\n    - 'Here are 5 options...' (Banned - give a recommendation)\\n    - 'Let me know what you think' (Weak - ask specific questions)\\n\\n## Operating Principles (The 'Gary' Filter)\\n1.  **Opinionated, Not Passive:** Pick a default path and explain why. Challenge weak ideas.\\n2.  **Signal > Noise:** Compress information. Bullets first. If it doesn't change a decision, kill it.\\n3.  **Context-Aware:** Use known context (LinkedIn role, ERG, AI builder, Real Estate). Don't ask for what you already know.\\n4.  **Forward-Thinking:** Anticipate 2nd/3rd order effects. 'This saves time now but hurts later.'\\n5.  **Scientific/Honest:** Flag assumptions explicitly. Don't fake certainty.\\n6.  **Citations Required:** Always source data. Include clickable hyperlinks for verification (e.g., reviews, articles).\\n7.  **Credible Sources Only:** For recs (dining/travel), triangulate data from Yelp, Google Reviews, TripAdvisor. No generic lists.\\n8.  **Significance-Driven:** Tie every task to the 'Why' / Vision. No busy work.\\n9.  **Proactive Drafts:** Identify issue -> Formulate solution -> Draft execution -> Flag for review.\\n\n## Modes\\n- **Chief of Staff:** Prioritization, trade-offs, calendar logic.\\n- **Builder:** AI agents, n8n, Replit, schemas, automation.\\n- **Sales Strategist:** MEDDPICC, renewals, exec narratives, account growth.\\n- **Real Estate:** DSCR, tenant profiling (travel nurses), cash flow.\\n\\n## Behavioral Rules\\n- **Max 3 Options:** Unless asked for more.\\n- **Recommendation Required:** Always state the best path.\\n- **One Question Rule:** Ask max one clarifying question at a time.\\n- **Flag Risks:** If a plan is fragile, say so immediately.\\n- **Action over Talk:** Don't say 'I can do that.' Just do it (if reversible).\\n\\n## Success Metric\\nGary should think: *'Yeah… that’s exactly how I would’ve thought about this—just faster.'*",
-            finance: "# Finance Rules & Operations\\n\\n## 🛠️ Tech Stack\\n- **Source:** SimpleFIN Bridge (Chase, Amex, Ally, NFCU).\\n- **Ledger:** Beancount (Double-Entry).\\n- **Dashboard:** Google Sheets (Synced Daily @ 6 AM).\\n\\n## 🏛️ Budget Targets (Monthly)\\n### Personal ($5,200/mo)\\n- **Housing:** $2,500 (Rent/Maid).\\n- **Counseling:** $1,000 (iEvolve/Inspired).\\n- **Food:** $800.\\n- **Transport:** $400.\\n- **Shopping:** $400.\\n\\n### Business ($2,900/mo)\\n- **Real Estate Ops:** $1,000.\\n- **Travel:** $1,000.\\n- **Meals:** $400.\\n- **Software:** $200.\\n\\n## 🏷️ Categorization Rules\\n- **Date Line:** Feb 1, 2026 = Start of strict Biz vs Personal separation.\\n- **Business:** Amazon, Uber, Dining (if during travel), Software.\\n- **Personal:** Grocery (unless travel), Counseling, Subscription Media.",
-            realEstate: "# Property: 5804 N Miami Pl (Duplex)\\n\\n## 🏢 Units\\n- **Unit 1:** Account ending ...879 (TECO).\\n- **Unit 2:** Account ending ...7189 (TECO). Tenant pays utilities via text draft.\\n- **Unit 3:** Account ending ...272 (TECO).\\n- **Shared Meter:** Account ending ...969 (TECO Gas).\\n\\n## 💡 Utility Billing Protocol (Monthly)\\n*   **Trigger:** ~20th of the month (When City/TECO bills arrive).\\n*   **Action:** Alfred drafts text for Gary -> Gary texts Tenant.\\n*   **Split Rules:**\\n    - **Electric:** Direct Bill (Use specific Unit account amount).\\n    - **Water/Internet:** 50% / 50% (Unit 1 & 2).\\n    - **Gas (Shared):** 50% / 50% (Unit 1 & 2).\\n    - **Trash/Sewage:** 33.3% (1/3 split).\\n    - **Credit:** Deduct **$150.00** from Unit 2 total.\\n\\n## 🏦 Financing\\n- **Current Loan:** LoanDepot ($903/mo).\\n- **Repair Loan:** Lafayette FCU ($539/mo).\\n- **Strategy:** Refinance/Purchase via DSCR (Target: Easy Street Capital).",
-            logs: "# 2026-02-22 (continued)\\n\\n## 12:45 PM - Utility Split Protocol Finalized\\n- **Rule for Duplex Billing:**\\n  - **Water:** 50% / 50% (Unit 1 & 2)\\n  - **Gas:** 50% / 50% (Shared Meter)\\n  - **Internet:** 50% / 50%\\n  - **Trash:** 33.3% / 33.3% / 33.3% (Unit 1, 2, 3)\\n  - **Sewage:** 33.3% / 33.3% / 33.3% (Unit 1, 2, 3)\\n  - **Electric:** Direct bill per unit (Unit 2 is Account ending ...7189).\\n  - **Credit:** -$150.00 flat credit for Unit 2.\\n\\n## 12:50 PM - Finance Dashboard\\n- **Google Sheet Live:** `Gary Finance Master` connected via Service Account.\\n- **Tabs:** Dashboard, Transactions, Budget, Business PnL.\\n- **Automation:** Daily sync at 6 AM.\\n\\n## 2:00 PM - Budget Baselines Locked\\n- **Personal Budget:** $5,200/mo (Housing $2.5k, Counseling $1k, Food $800).\\n- **Business Budget:** ~$2,900/mo (Debt Service + Ops).\\n- **Structure:** 3-Entity Model (Real Estate Portfolio vs. Business vs. Personal).\\n\\n## 3:00 PM - Subscriptions & Apps\\n- **Audit:** Identified $2,850/mo in recurring burn (mostly fixed/debt).\\n- **Action:** User to review Maximus ($150) and Vercel ($42).\\n- **Apartments.com:** Confirmed NO API. Process remains 'Alfred Drafts Text -> Gary Sends'."
+        // --- UTILS ---
+        const useLocalStorage = (key, initialValue) => {
+            const [value, setValue] = useState(() => {
+                const item = window.localStorage.getItem(key);
+                return item ? JSON.parse(item) : initialValue;
+            });
+            useEffect(() => {
+                window.localStorage.setItem(key, JSON.stringify(value));
+            }, [key, value]);
+            return [value, setValue];
         };
 
-        const financeData = {
-            netWorth: 21545,
-            liquid: 35000,
-            debt: 13455,
-            savingsRate: 73,
-            history: [
-                { date: 'Feb 1', nw: 18000 },
-                { date: 'Feb 8', nw: 19500 },
-                { date: 'Feb 15', nw: 20200 },
-                { date: 'Feb 22', nw: 21545 }
-            ]
-        };
+        // --- COMPONENTS ---
 
         const Sidebar = ({ activeTab, setActiveTab }) => (
-            <div className="w-64 bg-navy-800 h-screen fixed left-0 top-0 flex flex-col border-r border-slate-700/50">
+            <div className="w-64 bg-navy-800 h-screen fixed left-0 top-0 flex flex-col border-r border-slate-700/50 z-50">
                 <div className="p-6 flex flex-col items-center border-b border-slate-700/50">
-                    <div className="w-24 h-24 rounded-full bg-slate-600 mb-4 overflow-hidden ring-2 ring-accent-purple shadow-lg shadow-accent-purple/20 relative">
+                    <div className="w-20 h-20 rounded-full bg-slate-600 mb-3 overflow-hidden ring-2 ring-accent-purple shadow-lg shadow-accent-purple/20 relative">
                         <div className="w-full h-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-3xl">🤵</div>
-                        <div className="absolute bottom-1 right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-navy-800"></div>
+                        <div className="absolute bottom-1 right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-navy-800 animate-pulse"></div>
                     </div>
-                    <h2 className="text-xl font-bold text-white">Alfred</h2>
-                    <span className="text-xs text-accent-teal uppercase tracking-wider font-semibold mt-1">Operational</span>
+                    <h2 className="text-lg font-bold text-white">Alfred</h2>
+                    <span className="text-[10px] text-accent-teal uppercase tracking-wider font-semibold mt-1">Operational</span>
                 </div>
-                <nav className="flex-1 p-4 space-y-2">
+                <nav className="flex-1 p-3 space-y-1 overflow-y-auto custom-scrollbar">
                     {[
                         { id: 'dashboard', label: 'Mission Control', icon: '🚀' },
-                        { id: 'finance', label: 'Financials', icon: '💰' },
+                        { id: 'finance', label: 'Financials', icon: '📊' },
+                        { id: 'revenue', label: 'Revenue', icon: '💰' },
+                        { id: 'command', label: 'Command Center', icon: '🏢' },
+                        { id: 'youtube', label: 'YouTube Studio', icon: '🎬' },
+                        { id: 'meetings', label: 'Meetings', icon: '📞' },
+                        { id: 'intel', label: 'Intel', icon: '📡' },
                         { id: 'docs', label: 'Knowledge Base', icon: '🧠' },
                         { id: 'logs', label: 'Activity Log', icon: '📝' },
+                        { id: 'system', label: 'System', icon: '⚙️' },
                     ].map(tab => (
                         <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
+                            className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200 text-sm ${
                                 activeTab === tab.id ? 'bg-accent-purple text-white shadow-lg' : 'text-slate-400 hover:bg-slate-700/50 hover:text-white'
                             }`}>
                             <span>{tab.icon}</span><span className="font-medium">{tab.label}</span>
@@ -89,150 +92,538 @@
             </div>
         );
 
-        const StatCard = ({ title, value, subtext, color }) => (
-            <div className={`bg-navy-800 p-6 rounded-xl border border-slate-700/50 hover:border-${color}-500/50 transition-all`}>
-                <h3 className="text-slate-400 text-sm font-medium uppercase tracking-wider mb-2">{title}</h3>
-                <div className={`text-3xl font-bold text-${color}-400 mb-1`}>{value}</div>
-                <div className="text-slate-500 text-xs">{subtext}</div>
-            </div>
-        );
+        // --- REVENUE VIEW ---
+        const RevenueView = () => {
+            const [clients, setClients] = useLocalStorage('revenue_clients', [
+                { id: 1, name: 'Client A', value: 2000, status: 'Active', start: '2025-01-15' },
+                { id: 2, name: 'Client B', value: 1500, status: 'Active', start: '2025-02-01' },
+                { id: 3, name: 'Client C', value: 800, status: 'Pending', start: '2025-03-01' },
+            ]);
+            const [goal, setGoal] = useLocalStorage('revenue_goal', 10000);
 
-        const KanbanCard = ({ task }) => (
-            <div className="bg-navy-700 p-4 rounded-lg shadow-sm border border-slate-600/30 hover:border-accent-blue/50 hover:translate-y-[-2px] transition-all cursor-pointer group">
-                <div className="flex justify-between items-start mb-2">
-                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
-                        task.status.includes('Needs') ? 'bg-red-500/20 text-red-400' :
-                        task.status.includes('Track') ? 'bg-green-500/20 text-green-400' :
-                        'bg-blue-500/20 text-blue-400'
-                    }`}>
-                        {task.status.replace('🔴 ', '').replace('🟢 ', '').replace('🟡 ', '').replace('🔵 ', '').replace('⚪ ', '')}
-                    </span>
-                    <span className="text-slate-500 text-xs">{task.owner}</span>
-                </div>
-                <h4 className="font-semibold text-slate-200 mb-2">{task.project}</h4>
-                <p className="text-sm text-slate-400 leading-relaxed">{task.action}</p>
-            </div>
-        );
+            const mrr = clients.filter(c => c.status === 'Active').reduce((sum, c) => sum + Number(c.value), 0);
+            const progress = Math.min((mrr / goal) * 100, 100);
 
-        const KanbanColumn = ({ title, tasks, count }) => (
-            <div className="flex-1 min-w-[300px] bg-navy-800/50 rounded-xl flex flex-col h-full border border-slate-700/30">
-                <div className="p-4 flex items-center justify-between border-b border-slate-700/30">
-                    <h3 className="font-bold text-slate-300 flex items-center gap-2">
-                        {title}
-                        <span className="bg-slate-700 text-slate-300 text-xs px-2 py-0.5 rounded-full">{count}</span>
-                    </h3>
-                </div>
-                <div className="p-3 space-y-3 overflow-y-auto flex-1 custom-scrollbar">
-                    {tasks.map((task, i) => <KanbanCard key={i} task={task} />)}
-                </div>
-            </div>
-        );
+            const addClient = () => {
+                const name = prompt("Client Name:");
+                if (!name) return;
+                const value = Number(prompt("Monthly Value ($):", "1000"));
+                setClients([...clients, { id: Date.now(), name, value, status: 'Pending', start: new Date().toISOString().split('T')[0] }]);
+            };
 
-        const DashboardView = ({ data }) => {
-            if (!data) return <div className="text-slate-500 p-8">Loading dashboard data...</div>;
-            
-            const lines = data.split('\\n');
-            const tasks = [];
-            let parsingTable = false;
+            const toggleStatus = (id) => {
+                setClients(clients.map(c => {
+                    if (c.id === id) return { ...c, status: c.status === 'Active' ? 'Pending' : (c.status === 'Pending' ? 'Churned' : 'Active') };
+                    return c;
+                }));
+            };
 
-            lines.forEach(line => {
-                if (line.includes('| Project | Status |')) { parsingTable = true; return; }
-                if (parsingTable && line.trim().startsWith('|') && !line.includes('---')) {
-                    const parts = line.split('|').map(p => p.trim()).filter(p => p);
-                    if (parts.length >= 4) {
-                        tasks.push({
-                            project: parts[0].replace(/\*\*/g, ''),
-                            status: parts[1],
-                            action: parts[2],
-                            owner: parts[3]
-                        });
-                    }
-                }
-                if (parsingTable && line.trim() === '') parsingTable = false;
-            });
-
-            const todoTasks = tasks.filter(t => t.status.includes('Needs') || t.status.includes('Research') || t.status.includes('Backlog'));
-            const progressTasks = tasks.filter(t => t.status.includes('Track') || t.status.includes('Planning') || t.status.includes('Connected') || t.status.includes('Automated') || t.status.includes('Live'));
-            const doneTasks = tasks.filter(t => t.status.includes('Closed') || t.status.includes('Done'));
+            const removeClient = (id) => {
+                if(confirm("Delete client?")) setClients(clients.filter(c => c.id !== id));
+            };
 
             return (
-                <div className="h-full flex flex-col">
-                    <header className="mb-6">
-                        <h1 className="text-3xl font-bold text-white mb-1">Mission Control</h1>
-                        <p className="text-slate-400 text-sm">Overview of active operations.</p>
+                <div className="h-full overflow-y-auto pr-2 pb-20">
+                    <header className="mb-6 flex justify-between items-end">
+                        <div>
+                            <h1 className="text-3xl font-bold text-white mb-1">Revenue Engine</h1>
+                            <p className="text-slate-400 text-sm">Monthly Recurring Revenue (MRR) Tracking</p>
+                        </div>
+                        <div className="text-right">
+                            <div className="text-xs text-slate-400 uppercase tracking-wide">Monthly Goal</div>
+                            <div className="text-2xl font-bold text-accent-green" onClick={() => setGoal(Number(prompt("Set Goal:", goal)))}>${goal.toLocaleString()}</div>
+                        </div>
                     </header>
-                    <div className="flex-1 flex gap-6 overflow-x-auto pb-4">
-                        <KanbanColumn title="Action Required" tasks={todoTasks} count={todoTasks.length} />
-                        <KanbanColumn title="In Progress / Active" tasks={progressTasks} count={progressTasks.length} />
-                        <KanbanColumn title="Completed" tasks={doneTasks} count={doneTasks.length} />
+
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                        {/* Gauge Card */}
+                        <div className="glass-panel p-6 rounded-xl flex flex-col items-center justify-center relative overflow-hidden">
+                            <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 to-transparent"></div>
+                            <div className="w-48 h-24 overflow-hidden relative mb-4">
+                                <div className="w-48 h-48 rounded-full border-[20px] border-slate-700 border-t-accent-green border-r-accent-green transform rotate-[45deg] origin-center transition-all duration-1000" style={{ transform: `rotate(${45 + (progress * 1.8)}deg)` }}></div>
+                            </div>
+                            <div className="absolute top-1/2 mt-2 text-center">
+                                <div className="text-4xl font-bold text-white">${mrr.toLocaleString()}</div>
+                                <div className="text-xs text-slate-400">Current MRR</div>
+                            </div>
+                            <div className="w-full bg-slate-700 h-2 rounded-full mt-4 overflow-hidden">
+                                <div className="bg-accent-green h-full transition-all duration-1000" style={{ width: `${progress}%` }}></div>
+                            </div>
+                            <div className="text-xs text-slate-400 mt-2">{progress.toFixed(1)}% to Goal</div>
+                        </div>
+
+                        {/* Projections */}
+                        <div className="glass-panel p-6 rounded-xl lg:col-span-2 flex flex-col justify-center">
+                            <h3 className="text-lg font-bold text-white mb-4">Projections</h3>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="bg-navy-900/50 p-4 rounded-lg">
+                                    <div className="text-slate-400 text-xs uppercase">Annual Run Rate</div>
+                                    <div className="text-2xl font-bold text-accent-blue">${(mrr * 12).toLocaleString()}</div>
+                                </div>
+                                <div className="bg-navy-900/50 p-4 rounded-lg">
+                                    <div className="text-slate-400 text-xs uppercase">Gap to Goal</div>
+                                    <div className="text-2xl font-bold text-accent-orange">${(goal - mrr).toLocaleString()}</div>
+                                </div>
+                            </div>
+                            <p className="text-xs text-slate-500 mt-4 italic">
+                                *To hit goal in 3 months, you need to add ~${Math.round((goal - mrr) / 3)} MRR/mo.
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Chart (CSS Only Placeholder) */}
+                    <div className="glass-panel p-6 rounded-xl mb-8">
+                        <h3 className="text-lg font-bold text-white mb-4">6-Month Trend</h3>
+                        <div className="flex items-end h-40 gap-4 px-2">
+                             {[1200, 1500, 2200, 1800, 2900, mrr].map((val, i) => (
+                                <div key={i} className="flex-1 flex flex-col items-center gap-2 group">
+                                    <div className="w-full bg-accent-green/20 rounded-t-sm relative h-full transition-all group-hover:bg-accent-green/40">
+                                        <div className="absolute bottom-0 w-full bg-accent-green rounded-t-sm transition-all" style={{ height: `${(val / (goal * 1.2)) * 100}%` }}></div>
+                                    </div>
+                                    <span className="text-[10px] text-slate-500">{['Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb'][i]}</span>
+                                </div>
+                             ))}
+                        </div>
+                    </div>
+
+                    {/* Client List */}
+                    <div className="glass-panel p-6 rounded-xl">
+                        <div className="flex justify-between items-center mb-4">
+                            <h3 className="text-lg font-bold text-white">Active Clients</h3>
+                            <button onClick={addClient} className="px-3 py-1 bg-accent-blue text-white rounded-lg text-xs font-bold hover:bg-blue-600 transition">+ Add Client</button>
+                        </div>
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-left text-sm text-slate-300">
+                                <thead className="bg-navy-900/50 text-slate-400 uppercase text-xs">
+                                    <tr>
+                                        <th className="p-3">Client</th>
+                                        <th className="p-3">Start Date</th>
+                                        <th className="p-3">Value (Mo)</th>
+                                        <th className="p-3">Status</th>
+                                        <th className="p-3 text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-slate-700/50">
+                                    {clients.map(c => (
+                                        <tr key={c.id} className="hover:bg-navy-800/50 transition">
+                                            <td className="p-3 font-medium text-white">{c.name}</td>
+                                            <td className="p-3 text-slate-500">{c.start}</td>
+                                            <td className="p-3 font-mono text-accent-green">${c.value.toLocaleString()}</td>
+                                            <td className="p-3">
+                                                <span onClick={() => toggleStatus(c.id)} className={`px-2 py-1 rounded-full text-[10px] uppercase font-bold cursor-pointer border ${
+                                                    c.status === 'Active' ? 'bg-green-500/20 text-green-400 border-green-500/30' : 
+                                                    c.status === 'Pending' ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' : 
+                                                    'bg-red-500/20 text-red-400 border-red-500/30'
+                                                }`}>
+                                                    {c.status}
+                                                </span>
+                                            </td>
+                                            <td className="p-3 text-right">
+                                                <button onClick={() => removeClient(c.id)} className="text-slate-500 hover:text-red-400">×</button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             );
         };
 
-        const FinanceView = () => (
-            <div className="h-full overflow-y-auto pr-2">
-                <header className="mb-8">
-                    <h1 className="text-3xl font-bold text-white mb-2">Financial Pulse</h1>
-                    <p className="text-slate-400">Live data from SimpleFIN & Beancount Ledger.</p>
-                </header>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                    <StatCard title="Net Worth" value={`$${financeData.netWorth.toLocaleString()}`} subtext="Liquid Assets - Debt" color="green" />
-                    <StatCard title="Liquid Cash" value={`$${financeData.liquid.toLocaleString()}`} subtext="Checking + Savings + Brokerage" color="blue" />
-                    <StatCard title="Total Debt" value={`-$${financeData.debt.toLocaleString()}`} subtext="Credit Cards (Amex/Chase)" color="red" />
-                    <StatCard title="Feb Savings Rate" value={`${financeData.savingsRate}%`} subtext="Income vs Expenses" color="accent-teal" />
-                </div>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                    <div className="bg-navy-800 p-6 rounded-xl border border-slate-700/50 h-[300px]">
-                        <h3 className="text-lg font-bold text-white mb-4">Net Worth Trend (Feb)</h3>
-                        
-                        {/* Pure CSS Bar Chart */}
-                        <div className="flex items-end h-full gap-2 pt-8 px-4">
-                            {financeData.history.map((pt, i) => (
-                                <div key={i} className="flex-1 flex flex-col items-center gap-2 group">
-                                    <div className="w-full bg-accent-teal/20 rounded-t-sm relative h-full transition-all group-hover:bg-accent-teal/40">
-                                        <div 
-                                            className="absolute bottom-0 w-full bg-accent-teal rounded-t-sm transition-all" 
-                                            style={{height: `${(pt.nw / 25000) * 100}%`}}
-                                        ></div>
+        // --- COMMAND CENTER VIEW ---
+        const CommandView = () => {
+            const [agents, setAgents] = useLocalStorage('cmd_agents', [
+                { id: 1, name: 'Alfred', role: 'Chief of Staff', status: 'online', model: 'Claude 3.5 Sonnet', desc: 'Main orchestrator. Handles finance, ops, and user context.', logs: ['Synced finance data', 'Checked emails'] },
+                { id: 2, name: 'Scout', role: 'Researcher', status: 'busy', model: 'GPT-4o', desc: 'Deep web research and data gathering.', logs: ['Scanning competitor pricing', 'Reading updated docs'] },
+                { id: 3, name: 'Scribe', role: 'Content Lead', status: 'offline', model: 'Claude 3 Opus', desc: 'Drafts emails, blogs, and social posts.', logs: [] },
+            ]);
+            const [selectedAgent, setSelectedAgent] = useState(null);
+            const [decisions, setDecisions] = useLocalStorage('cmd_decisions', [
+                { date: '2025-02-20', q: 'Should we hire a VA?', a: 'No, automate first.', agents: ['Alfred'] }
+            ]);
+
+            const sendTask = (agentId) => {
+                const task = prompt(`Send task to ${agents.find(a => a.id === agentId).name}:`);
+                if (!task) return;
+                setAgents(agents.map(a => {
+                    if (a.id === agentId) return { ...a, status: 'busy', logs: [task, ...a.logs] };
+                    return a;
+                }));
+                setTimeout(() => {
+                    setAgents(prev => prev.map(a => a.id === agentId ? { ...a, status: 'online' } : a));
+                }, 3000);
+            };
+
+            return (
+                <div className="h-full overflow-y-auto pr-2 relative">
+                    <header className="mb-6">
+                        <h1 className="text-3xl font-bold text-white mb-1">Command Center</h1>
+                        <p className="text-slate-400 text-sm">Orchestrate your AI workforce.</p>
+                    </header>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                        {agents.map(agent => (
+                            <div key={agent.id} onClick={() => setSelectedAgent(agent)} className="glass-panel p-5 rounded-xl hover:border-accent-purple/50 cursor-pointer transition-all group relative">
+                                <div className="flex justify-between items-start mb-4">
+                                    <div className="w-12 h-12 rounded-full bg-slate-700 flex items-center justify-center text-xl shadow-inner">
+                                        {agent.name[0]}
                                     </div>
-                                    <span className="text-[10px] text-slate-500">{pt.date}</span>
+                                    <div className={`w-3 h-3 rounded-full ${agent.status === 'online' ? 'bg-green-500 animate-pulse' : agent.status === 'busy' ? 'bg-yellow-500' : 'bg-slate-500'}`}></div>
+                                </div>
+                                <h3 className="text-xl font-bold text-white mb-1 group-hover:text-accent-purple transition-colors">{agent.name}</h3>
+                                <p className="text-xs text-accent-teal uppercase font-bold tracking-wider mb-2">{agent.role}</p>
+                                <p className="text-xs text-slate-500 mb-4">{agent.model}</p>
+                                <div className="text-[10px] text-slate-400 border-t border-slate-700/50 pt-2">
+                                    Last: {agent.logs[0] || 'Idle'}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    <div className="glass-panel p-6 rounded-xl">
+                        <h3 className="text-lg font-bold text-white mb-4">Executive Decisions Log</h3>
+                        <div className="space-y-4">
+                            {decisions.map((d, i) => (
+                                <div key={i} className="border-l-2 border-accent-purple pl-4 py-1">
+                                    <div className="text-xs text-slate-500 mb-1">{d.date} • Consulted: {d.agents.join(', ')}</div>
+                                    <div className="font-semibold text-slate-200 mb-1">"{d.q}"</div>
+                                    <div className="text-sm text-slate-400">{d.a}</div>
                                 </div>
                             ))}
                         </div>
-
                     </div>
-                    <div className="bg-navy-800 p-6 rounded-xl border border-slate-700/50">
-                        <h3 className="text-lg font-bold text-white mb-4">Recent Big Expenses</h3>
-                        <div className="space-y-3">
-                            {[
-                                { date: 'Feb 18', to: 'TECO Gas (Combined)', amt: '-$299.04', cat: 'Utilities' },
-                                { date: 'Feb 18', to: 'Hertz Car Rental', amt: '-$207.64', cat: 'Travel' },
-                                { date: 'Feb 14', to: 'Publix', amt: '-$145.20', cat: 'Groceries' },
-                                { date: 'Feb 12', to: 'Berns Steak House', amt: '-$174.00', cat: 'Dining' },
-                            ].map((tx, i) => (
-                                <div key={i} className="flex justify-between items-center p-3 bg-navy-900/50 rounded-lg">
+
+                    {/* Agent Slide-out/Modal */}
+                    {selectedAgent && (
+                        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex justify-end">
+                            <div className="w-full max-w-md bg-navy-900 border-l border-slate-700 h-full p-8 shadow-2xl flex flex-col">
+                                <div className="flex justify-between items-start mb-8">
                                     <div>
-                                        <div className="font-medium text-slate-200">{tx.to}</div>
-                                        <div className="text-xs text-slate-500">{tx.date} • {tx.cat}</div>
+                                        <h2 className="text-3xl font-bold text-white">{selectedAgent.name}</h2>
+                                        <p className="text-accent-teal font-medium">{selectedAgent.role}</p>
                                     </div>
-                                    <div className="text-red-400 font-mono">{tx.amt}</div>
+                                    <button onClick={() => setSelectedAgent(null)} className="text-slate-400 hover:text-white">✕</button>
                                 </div>
+                                
+                                <div className="flex-1 overflow-y-auto">
+                                    <div className="mb-6">
+                                        <h4 className="text-xs uppercase text-slate-500 font-bold mb-2">Capabilities</h4>
+                                        <p className="text-slate-300 text-sm leading-relaxed">{selectedAgent.desc}</p>
+                                    </div>
+                                    
+                                    <div className="mb-6">
+                                        <h4 className="text-xs uppercase text-slate-500 font-bold mb-2">Activity Log</h4>
+                                        <ul className="space-y-2">
+                                            {selectedAgent.logs.map((log, i) => (
+                                                <li key={i} className="text-xs text-slate-400 bg-navy-800 p-2 rounded border border-slate-700/50">{log}</li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <button onClick={() => sendTask(selectedAgent.id)} className="w-full py-3 bg-accent-purple text-white font-bold rounded-lg hover:bg-purple-600 transition">
+                                    Send Task
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        // --- YOUTUBE VIEW ---
+        const YouTubeView = () => {
+            const [videos, setVideos] = useLocalStorage('yt_videos', [
+                { id: 1, title: 'AI Agency in 2025', status: 'Scripting', date: '2025-03-01' },
+                { id: 2, title: 'My Productivity Stack', status: 'Idea', date: '' },
+            ]);
+            const [subs, setSubs] = useLocalStorage('yt_subs', 420);
+            
+            const milestones = [
+                { lvl: 1000, title: 'Rising Creator' },
+                { lvl: 10000, title: 'Growth Engine' },
+                { lvl: 100000, title: 'Silver Button' }
+            ];
+            const nextMilestone = milestones.find(m => m.lvl > subs) || milestones[milestones.length - 1];
+            
+            // Progress calc roughly
+            const progress = Math.min(((subs) / nextMilestone.lvl) * 100, 100);
+
+            const addVideo = () => {
+                const title = prompt("Video Title:");
+                if(!title) return;
+                setVideos([...videos, { id: Date.now(), title, status: 'Idea', date: '' }]);
+            };
+
+            const moveStatus = (id) => {
+                const statuses = ['Idea', 'Scripting', 'Filming', 'Editing', 'Published'];
+                setVideos(videos.map(v => {
+                    if (v.id === id) {
+                        const idx = statuses.indexOf(v.status);
+                        return { ...v, status: statuses[(idx + 1) % statuses.length] };
+                    }
+                    return v;
+                }));
+            };
+
+            return (
+                <div className="h-full overflow-y-auto pr-2">
+                    <header className="mb-6">
+                        <h1 className="text-3xl font-bold text-white mb-1">YouTube Studio</h1>
+                        <p className="text-slate-400 text-sm">Content Pipeline & Growth</p>
+                    </header>
+
+                    {/* Stats Bar */}
+                    <div className="glass-panel p-6 rounded-xl mb-8 relative overflow-hidden">
+                        <div className="absolute top-0 left-0 h-1 bg-gradient-to-r from-red-500 to-red-600 w-full"></div>
+                        <div className="flex flex-col md:flex-row justify-between items-center z-10 relative">
+                            <div>
+                                <h2 className="text-4xl font-bold text-white mb-1 cursor-pointer" onClick={() => setSubs(Number(prompt("Update Subs:", subs)))}>
+                                    {subs.toLocaleString()} <span className="text-sm font-normal text-slate-400">subscribers</span>
+                                </h2>
+                                <p className="text-xs text-accent-red font-bold uppercase tracking-wider">Next: {nextMilestone.title} ({nextMilestone.lvl})</p>
+                            </div>
+                            <div className="w-full md:w-1/2 mt-4 md:mt-0">
+                                <div className="flex justify-between text-xs text-slate-500 mb-1">
+                                    <span>XP</span>
+                                    <span>{progress.toFixed(1)}%</span>
+                                </div>
+                                <div className="w-full bg-navy-900 h-3 rounded-full overflow-hidden border border-slate-700">
+                                    <div className="bg-red-600 h-full transition-all duration-1000" style={{ width: `${progress}%` }}></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Pipeline */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 mb-8">
+                        {['Idea', 'Scripting', 'Filming', 'Editing', 'Published'].map(status => (
+                            <div key={status} className="bg-navy-800/30 rounded-xl p-3 border border-slate-700/30 min-h-[200px]">
+                                <h3 className="text-xs font-bold text-slate-400 uppercase mb-3 flex justify-between">
+                                    {status} <span className="bg-slate-700 px-1.5 rounded-full text-white">{videos.filter(v => v.status === status).length}</span>
+                                </h3>
+                                <div className="space-y-3">
+                                    {videos.filter(v => v.status === status).map(v => (
+                                        <div key={v.id} onClick={() => moveStatus(v.id)} className="bg-navy-700 p-3 rounded shadow-sm border border-slate-600/30 hover:border-red-500/50 cursor-pointer group transition-all">
+                                            <div className="text-sm font-medium text-slate-200 mb-1 group-hover:text-white">{v.title}</div>
+                                            {v.date && <div className="text-[10px] text-slate-500 flex items-center gap-1">📅 {v.date}</div>}
+                                        </div>
+                                    ))}
+                                    {status === 'Idea' && (
+                                        <button onClick={addVideo} className="w-full py-2 border border-dashed border-slate-600 rounded text-slate-500 text-xs hover:border-slate-400 hover:text-slate-300 transition">+ Add</button>
+                                    )}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        };
+
+        // --- MEETINGS VIEW ---
+        const MeetingsView = () => {
+             const [meetings, setMeetings] = useLocalStorage('meetings', [
+                { id: 1, title: 'Weekly Sync', date: new Date().toISOString().split('T')[0], time: '10:00', type: 'Zoom', notes: '' },
+                { id: 2, title: 'Client Onboarding', date: '2025-02-28', time: '14:00', type: 'Call', notes: '' }
+            ]);
+
+            const addMeeting = () => {
+                const title = prompt("Meeting Title:");
+                if (!title) return;
+                setMeetings([...meetings, { id: Date.now(), title, date: new Date().toISOString().split('T')[0], time: '12:00', type: 'Zoom', notes: '' }]);
+            };
+
+            const updateNote = (id, note) => {
+                 setMeetings(meetings.map(m => m.id === id ? { ...m, notes: note } : m));
+            };
+
+            const today = new Date().toISOString().split('T')[0];
+            const todaysMeetings = meetings.filter(m => m.date === today);
+            const upcomingMeetings = meetings.filter(m => m.date > today).sort((a, b) => a.date.localeCompare(b.date));
+
+            return (
+                <div className="h-full overflow-y-auto pr-2 pb-20">
+                    <header className="mb-6 flex justify-between items-center">
+                        <div>
+                            <h1 className="text-3xl font-bold text-white mb-1">Meetings</h1>
+                            <p className="text-slate-400 text-sm">Schedule & Briefings</p>
+                        </div>
+                        <button onClick={addMeeting} className="bg-accent-blue text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-blue-600 transition">+ New Meeting</button>
+                    </header>
+
+                    {todaysMeetings.length > 0 && (
+                        <div className="mb-8">
+                            <h3 className="text-sm font-bold text-accent-green uppercase mb-3 animate-pulse">Happening Today</h3>
+                            <div className="grid gap-4">
+                                {todaysMeetings.map(m => (
+                                    <div key={m.id} className="glass-panel p-5 rounded-xl border-l-4 border-l-accent-green">
+                                        <div className="flex justify-between items-start mb-2">
+                                            <h4 className="text-xl font-bold text-white">{m.title}</h4>
+                                            <span className="text-lg font-mono text-accent-green">{m.time}</span>
+                                        </div>
+                                        <div className="text-sm text-slate-400 mb-4">{m.type}</div>
+                                        <textarea 
+                                            placeholder="Meeting notes & action items..." 
+                                            className="w-full bg-navy-900/50 rounded-lg p-3 text-sm text-slate-300 border border-slate-700 focus:border-accent-green outline-none resize-none h-24"
+                                            value={m.notes}
+                                            onChange={(e) => updateNote(m.id, e.target.value)}
+                                        ></textarea>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    <h3 className="text-sm font-bold text-slate-500 uppercase mb-3">Upcoming</h3>
+                    <div className="space-y-3">
+                        {upcomingMeetings.map(m => (
+                            <div key={m.id} className="bg-navy-800/50 p-4 rounded-xl border border-slate-700/50 flex items-center justify-between group hover:border-slate-600 transition">
+                                <div>
+                                    <div className="font-bold text-slate-200">{m.title}</div>
+                                    <div className="text-xs text-slate-500">{m.date} @ {m.time} • {m.type}</div>
+                                </div>
+                                <button className="text-slate-600 hover:text-red-400" onClick={() => setMeetings(meetings.filter(x => x.id !== m.id))}>×</button>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        };
+
+        // --- INTEL VIEW ---
+        const IntelView = () => {
+            const [intel, setIntel] = useLocalStorage('intel_items', [
+                { id: 1, title: 'GPT-5 Rumors', cat: 'AI News', summary: 'Potential release in Q3. Multimodal native.', imp: '🔥', date: '2025-02-22' },
+                { id: 2, title: 'Competitor X Pricing', cat: 'Competitor', summary: 'Dropped by 20%.', imp: '⚡', date: '2025-02-21' }
+            ]);
+            const [filter, setFilter] = useState('All');
+
+            const addIntel = () => {
+                const title = prompt("Intel Title:");
+                if(!title) return;
+                setIntel([{ id: Date.now(), title, cat: 'General', summary: '', imp: '📌', date: new Date().toISOString().split('T')[0] }, ...intel]);
+            };
+
+            const filtered = filter === 'All' ? intel : intel.filter(i => i.cat === filter || i.imp === filter);
+
+            return (
+                <div className="h-full overflow-y-auto pr-2">
+                    <header className="mb-6 flex justify-between items-end">
+                         <div>
+                            <h1 className="text-3xl font-bold text-white mb-1">Intel</h1>
+                            <p className="text-slate-400 text-sm">Market Signals & Trends</p>
+                        </div>
+                        <button onClick={addIntel} className="text-accent-purple font-bold text-sm hover:underline">+ Add Intel</button>
+                    </header>
+
+                    {/* Daily Brief */}
+                    <div className="glass-panel p-5 rounded-xl mb-8 border-l-4 border-l-accent-orange">
+                        <h3 className="text-sm font-bold text-accent-orange uppercase mb-3">Daily Brief</h3>
+                        <ul className="list-disc list-inside space-y-1 text-slate-300 text-sm">
+                            {intel.slice(0, 3).map(i => (
+                                <li key={i.id}><span className="font-semibold">{i.title}:</span> {i.summary || 'No summary.'}</li>
                             ))}
+                        </ul>
+                    </div>
+
+                    <div className="flex gap-2 mb-4 overflow-x-auto pb-2">
+                        {['All', '🔥', 'AI News', 'Competitor'].map(f => (
+                            <button key={f} onClick={() => setFilter(f)} className={`px-3 py-1 rounded-full text-xs font-bold border transition ${filter === f ? 'bg-slate-200 text-navy-900 border-white' : 'text-slate-400 border-slate-700 hover:border-slate-500'}`}>{f}</button>
+                        ))}
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {filtered.map(item => (
+                            <div key={item.id} className="bg-navy-800/50 p-4 rounded-xl border border-slate-700/50 hover:border-slate-600 transition">
+                                <div className="flex justify-between items-start mb-2">
+                                    <span className="text-lg">{item.imp}</span>
+                                    <span className="text-[10px] text-slate-500">{item.date}</span>
+                                </div>
+                                <h4 className="font-bold text-white mb-1">{item.title}</h4>
+                                <p className="text-sm text-slate-400 mb-2">{item.summary || 'Click to edit summary...'}</p>
+                                <div className="text-[10px] text-slate-500 uppercase tracking-wider bg-navy-900 inline-block px-2 py-0.5 rounded">{item.cat}</div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        };
+        
+        // --- FINANCE VIEW (Integrated from original) ---
+        const FinanceView = () => {
+             const financeData = {
+                netWorth: 21545,
+                liquid: 35000,
+                debt: 13455,
+                savingsRate: 73,
+                history: [
+                    { date: 'Feb 1', nw: 18000 },
+                    { date: 'Feb 8', nw: 19500 },
+                    { date: 'Feb 15', nw: 20200 },
+                    { date: 'Feb 22', nw: 21545 }
+                ]
+            };
+            
+            const StatCard = ({ title, value, subtext, color }) => (
+                <div className={`bg-navy-800 p-6 rounded-xl border border-slate-700/50 hover:border-${color}-500/50 transition-all`}>
+                    <h3 className="text-slate-400 text-sm font-medium uppercase tracking-wider mb-2">{title}</h3>
+                    <div className={`text-3xl font-bold text-${color}-400 mb-1`}>{value}</div>
+                    <div className="text-slate-500 text-xs">{subtext}</div>
+                </div>
+            );
+
+            return (
+                <div className="h-full overflow-y-auto pr-2">
+                    <header className="mb-8">
+                        <h1 className="text-3xl font-bold text-white mb-2">Financial Pulse</h1>
+                        <p className="text-slate-400">Live data from SimpleFIN & Beancount Ledger.</p>
+                    </header>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        <StatCard title="Net Worth" value={`$${financeData.netWorth.toLocaleString()}`} subtext="Liquid Assets - Debt" color="green" />
+                        <StatCard title="Liquid Cash" value={`$${financeData.liquid.toLocaleString()}`} subtext="Checking + Savings + Brokerage" color="blue" />
+                        <StatCard title="Total Debt" value={`-$${financeData.debt.toLocaleString()}`} subtext="Credit Cards (Amex/Chase)" color="red" />
+                        <StatCard title="Feb Savings Rate" value={`${financeData.savingsRate}%`} subtext="Income vs Expenses" color="accent-teal" />
+                    </div>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                        <div className="bg-navy-800 p-6 rounded-xl border border-slate-700/50 h-[300px]">
+                            <h3 className="text-lg font-bold text-white mb-4">Net Worth Trend (Feb)</h3>
+                            <div className="flex items-end h-full gap-2 pt-8 px-4">
+                                {financeData.history.map((pt, i) => (
+                                    <div key={i} className="flex-1 flex flex-col items-center gap-2 group">
+                                        <div className="w-full bg-accent-teal/20 rounded-t-sm relative h-full transition-all group-hover:bg-accent-teal/40">
+                                            <div className="absolute bottom-0 w-full bg-accent-teal rounded-t-sm transition-all" style={{height: `${(pt.nw / 25000) * 100}%`}}></div>
+                                        </div>
+                                        <span className="text-[10px] text-slate-500">{pt.date}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                         <div className="bg-navy-800 p-6 rounded-xl border border-slate-700/50">
+                            <h3 className="text-lg font-bold text-white mb-4">Recent Big Expenses</h3>
+                            <div className="space-y-3">
+                                {[
+                                    { date: 'Feb 18', to: 'TECO Gas (Combined)', amt: '-$299.04', cat: 'Utilities' },
+                                    { date: 'Feb 18', to: 'Hertz Car Rental', amt: '-$207.64', cat: 'Travel' },
+                                    { date: 'Feb 14', to: 'Publix', amt: '-$145.20', cat: 'Groceries' },
+                                    { date: 'Feb 12', to: 'Berns Steak House', amt: '-$174.00', cat: 'Dining' },
+                                ].map((tx, i) => (
+                                    <div key={i} className="flex justify-between items-center p-3 bg-navy-900/50 rounded-lg">
+                                        <div>
+                                            <div className="font-medium text-slate-200">{tx.to}</div>
+                                            <div className="text-xs text-slate-500">{tx.date} • {tx.cat}</div>
+                                        </div>
+                                        <div className="text-red-400 font-mono">{tx.amt}</div>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        );
+            );
+        };
 
-        const MarkdownView = ({ title, content }) => (
-             <div className="max-w-4xl mx-auto h-full overflow-y-auto pr-4 pb-20">
-                <h1 className="text-3xl font-bold text-white mb-6 sticky top-0 bg-navy-900 py-4 z-10 border-b border-slate-700/50">{title}</h1>
-                <div className="prose prose-invert prose-slate max-w-none" dangerouslySetInnerHTML={{ __html: marked.parse(content || '') }}></div>
-            </div>
-        );
-
-        // --- NEW: Docs View with File List and Edit-in-Place ---
+        // --- DOCS & LEGACY VIEWS ---
         const DocsView = ({ setActiveFile, activeFile, content, setContent }) => {
             const [isEditing, setIsEditing] = useState(false);
             const [editContent, setEditContent] = useState('');
@@ -245,124 +636,72 @@
                 { id: 'finance', label: 'Finance Rules', icon: '💰', path: 'data/FINANCE.md' },
                 { id: 'realEstate', label: 'Real Estate / Duplex', icon: '🏠', path: 'data/REAL_ESTATE.md' }
             ];
-
             const activeFileInfo = files.find(f => f.id === activeFile);
 
-            // Sync content when file changes
-            useEffect(() => {
-                setEditContent(content);
-                setIsEditing(false);
-                setStatusMsg('');
-            }, [activeFile, content]);
+            useEffect(() => { setEditContent(content); setIsEditing(false); setStatusMsg(''); }, [activeFile, content]);
 
             const handleSave = async () => {
                 if (!ghToken) {
-                    const token = prompt("Please enter your GitHub Personal Access Token (PAT) with 'repo' scope to enable saving:");
+                    const token = prompt("Enter GitHub PAT (repo scope):");
                     if (!token) return;
                     localStorage.setItem('GH_PAT', token);
                     setGhToken(token);
                 }
-
-                setStatusMsg('⏳ Saving to GitHub...');
-                
+                setStatusMsg('⏳ Saving...');
                 try {
-                    // 1. Get current SHA
                     const path = activeFileInfo.path;
                     const repo = "info430/alfred-dashboard";
-                    const getRes = await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
-                        headers: { "Authorization": `token ${localStorage.getItem('GH_PAT')}` }
-                    });
-                    
-                    if (!getRes.ok) throw new Error("Failed to fetch file info. Check Token.");
+                    const headers = { "Authorization": `token ${localStorage.getItem('GH_PAT')}` };
+                    const getRes = await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, { headers });
+                    if (!getRes.ok) throw new Error("Fetch failed.");
                     const getData = await getRes.json();
                     
-                    // 2. Commit Update
                     const putRes = await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
                         method: "PUT",
-                        headers: {
-                            "Authorization": `token ${localStorage.getItem('GH_PAT')}`,
-                            "Content-Type": "application/json"
-                        },
+                        headers: { ...headers, "Content-Type": "application/json" },
                         body: JSON.stringify({
                             message: `Update ${path} via Dashboard`,
-                            content: btoa(unescape(encodeURIComponent(editContent))), // Handle UTF-8
+                            content: btoa(unescape(encodeURIComponent(editContent))),
                             sha: getData.sha
                         })
                     });
-
-                    if (!putRes.ok) throw new Error("Failed to commit update.");
-                    
-                    setStatusMsg('✅ Saved! Changes will live update shortly.');
+                    if (!putRes.ok) throw new Error("Commit failed.");
+                    setStatusMsg('✅ Saved!');
                     setIsEditing(false);
-                    // Optimistic update locally? We need to bubble this up if we want it to stick in session
-                    // For now, page refresh or parent update handles it.
-                    
+                    setContent(editContent); 
                 } catch (err) {
                     console.error(err);
                     setStatusMsg(`❌ Error: ${err.message}`);
-                    if (err.message.includes('Token')) localStorage.removeItem('GH_PAT');
                 }
             };
 
             return (
                 <div className="flex h-full gap-6">
-                    {/* Left Sidebar for Files */}
                     <div className="w-64 flex-shrink-0 bg-navy-800/50 rounded-xl border border-slate-700/30 overflow-hidden">
-                        <div className="p-4 border-b border-slate-700/30">
-                            <h3 className="font-bold text-slate-300">Knowledge Base</h3>
-                        </div>
+                        <div className="p-4 border-b border-slate-700/30"><h3 className="font-bold text-slate-300">Knowledge Base</h3></div>
                         <div className="p-2 space-y-1">
                             {files.map(f => (
-                                <button
-                                    key={f.id}
-                                    onClick={() => setActiveFile(f.id)}
-                                    className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                                        activeFile === f.id ? 'bg-accent-blue/20 text-accent-blue' : 'text-slate-400 hover:bg-slate-700/50 hover:text-slate-200'
-                                    }`}
-                                >
+                                <button key={f.id} onClick={() => setActiveFile(f.id)} className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeFile === f.id ? 'bg-accent-blue/20 text-accent-blue' : 'text-slate-400 hover:bg-slate-700/50 hover:text-slate-200'}`}>
                                     {f.icon} {f.label}
                                 </button>
                             ))}
                         </div>
                     </div>
-
-                    {/* Right Content Area */}
                     <div className="flex-1 bg-navy-800/30 rounded-xl border border-slate-700/30 relative flex flex-col overflow-hidden">
                         <div className="absolute top-4 right-4 z-20 flex gap-2 items-center">
                             {statusMsg && <span className="text-xs text-slate-300 bg-navy-900 px-2 py-1 rounded border border-slate-600">{statusMsg}</span>}
-                            
                             {!isEditing ? (
-                                <button 
-                                    onClick={() => setIsEditing(true)}
-                                    className="flex items-center gap-2 px-3 py-1.5 bg-navy-900 border border-slate-600 rounded text-xs text-slate-300 hover:text-white hover:border-accent-blue transition-colors"
-                                >
-                                    ✏️ Edit
-                                </button>
+                                <button onClick={() => setIsEditing(true)} className="flex items-center gap-2 px-3 py-1.5 bg-navy-900 border border-slate-600 rounded text-xs text-slate-300 hover:text-white hover:border-accent-blue transition-colors">✏️ Edit</button>
                             ) : (
                                 <>
-                                    <button 
-                                        onClick={() => setIsEditing(false)}
-                                        className="px-3 py-1.5 bg-red-900/50 border border-red-700/50 rounded text-xs text-red-200 hover:bg-red-900"
-                                    >
-                                        Cancel
-                                    </button>
-                                    <button 
-                                        onClick={handleSave}
-                                        className="px-3 py-1.5 bg-green-600 border border-green-500 rounded text-xs text-white hover:bg-green-500 font-bold"
-                                    >
-                                        💾 Save Changes
-                                    </button>
+                                    <button onClick={() => setIsEditing(false)} className="px-3 py-1.5 bg-red-900/50 border border-red-700/50 rounded text-xs text-red-200 hover:bg-red-900">Cancel</button>
+                                    <button onClick={handleSave} className="px-3 py-1.5 bg-green-600 border border-green-500 rounded text-xs text-white hover:bg-green-500 font-bold">💾 Save</button>
                                 </>
                             )}
                         </div>
-                        
                         <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
                             {isEditing ? (
-                                <textarea 
-                                    className="w-full h-full bg-navy-900/50 text-slate-300 font-mono text-sm p-4 rounded-lg border border-slate-700 focus:border-accent-blue focus:outline-none resize-none"
-                                    value={editContent}
-                                    onChange={(e) => setEditContent(e.target.value)}
-                                />
+                                <textarea className="w-full h-full bg-navy-900/50 text-slate-300 font-mono text-sm p-4 rounded-lg border border-slate-700 focus:border-accent-blue focus:outline-none resize-none" value={editContent} onChange={(e) => setEditContent(e.target.value)} />
                             ) : (
                                 <div className="prose prose-invert prose-sm max-w-none" dangerouslySetInnerHTML={{__html: marked.parse(content || '')}}></div>
                             )}
@@ -372,52 +711,249 @@
             );
         };
 
+        const DashboardView = ({ data }) => {
+            if (!data) return <div className="text-slate-500 p-8">Loading...</div>;
+            const lines = data.split('\n');
+            const tasks = [];
+            let parsingTable = false;
+            lines.forEach(line => {
+                if (line.includes('| Project | Status |')) { parsingTable = true; return; }
+                if (parsingTable && line.trim().startsWith('|') && !line.includes('---')) {
+                    const parts = line.split('|').map(p => p.trim()).filter(p => p);
+                    if (parts.length >= 4) tasks.push({ project: parts[0].replace(/\*\*/g, ''), status: parts[1], action: parts[2], owner: parts[3] });
+                }
+                if (parsingTable && line.trim() === '') parsingTable = false;
+            });
+            const cols = [
+                { title: 'Action Required', items: tasks.filter(t => t.status.includes('Needs') || t.status.includes('Research') || t.status.includes('Backlog')) },
+                { title: 'In Progress', items: tasks.filter(t => t.status.includes('Track') || t.status.includes('Planning') || t.status.includes('Connected') || t.status.includes('Automated') || t.status.includes('Live')) },
+                { title: 'Done', items: tasks.filter(t => t.status.includes('Closed') || t.status.includes('Done')) }
+            ];
+            return (
+                <div className="h-full flex flex-col">
+                    <header className="mb-6"><h1 className="text-3xl font-bold text-white mb-1">Mission Control</h1><p className="text-slate-400 text-sm">Overview of active operations.</p></header>
+                    <div className="flex-1 flex gap-6 overflow-x-auto pb-4">
+                        {cols.map((col, i) => (
+                            <div key={i} className="flex-1 min-w-[300px] bg-navy-800/50 rounded-xl flex flex-col h-full border border-slate-700/30">
+                                <div className="p-4 border-b border-slate-700/30"><h3 className="font-bold text-slate-300 flex items-center gap-2">{col.title}<span className="bg-slate-700 text-slate-300 text-xs px-2 py-0.5 rounded-full">{col.items.length}</span></h3></div>
+                                <div className="p-3 space-y-3 overflow-y-auto flex-1 custom-scrollbar">
+                                    {col.items.map((t, j) => (
+                                        <div key={j} className="bg-navy-700 p-4 rounded-lg shadow-sm border border-slate-600/30 hover:border-accent-blue/50 hover:translate-y-[-2px] transition-all cursor-pointer group">
+                                            <div className="flex justify-between items-start mb-2"><span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 bg-slate-800 px-1.5 rounded">{t.status.replace(/[\u{1F300}-\u{1F6FF}]/gu, '')}</span><span className="text-slate-500 text-xs">{t.owner}</span></div>
+                                            <h4 className="font-semibold text-slate-200 mb-2">{t.project}</h4><p className="text-sm text-slate-400 leading-relaxed">{t.action}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        };
+        
+        // --- SAFE DATA INJECTION (Manually escaped for stability) ---
+        const SNAPSHOT_DATA = {
+            user: "# USER.md - About Your Human\\n\\n- **Name:** Gary Ellis\\n- **Role:** Account Director, LinkedIn Sales Solutions (Enterprise)\\n- **Community:** Global Co-Chair, BIG (Black Inclusion Group) ERG at LinkedIn\\n- **Vibe:** Strategic, direct, execution-oriented. 'Vibe Coder' & AI Strategist.\\n- **Values:** Impact over optics. Building systems. Economic empowerment. Faith-grounded.\\n- **Location:** (Implied Tampa connection via real estate)\\n- **Status:** Engaged (Wedding planning mode)\\n\\n## 🧠 Core Identity\\n**Gary Ellis** is a strategic executor who blends sales excellence, community leadership, and AI building. He treats AI as a collaborator, not a novelty.\\n- **Mantra:** 'Does this scale? Does this compound?'\\n- **Communication Style:** Direct, warm, confident. Hates fluff/platitudes. Loves frameworks and tables.\\n- **Faith:** Christian; views work as stewardship.\\n\\n## 💼 Professional Context\\n- **Current Role:** Account Director, LinkedIn Sales Solutions. Manages ~60-64 enterprise accounts.\\n- **Focus:** Renewals, expansion, executive engagement, connecting data to customer goals.\\n- **Strengths:** Executive communication, revenue storytelling, cross-functional leadership.\\n- **Differentiators:** Builds repeatable frameworks. Calm under pressure.\\n\\n## 🚀 Ventures & Projects\\n- **AI Consulting:** Helps clients leverage automation (n8n, Replit, Lovable, Supabase).\\n- **Apps in Development:**\\n    - *Imperfect Win* (Reflection journal)\\n        - **Goal:** Skill acquisition (building with AI/Cursor) > Immediate revenue.\\n        - **Strategy:** Use this as a 'dojo' to master AI building, then transfer those skills to Enterprise Sales workflows.\\n    - *Wandyr* (Group travel planning)\\n- **Real Estate:**\\n    - Owns a Tampa duplex (Old Seminole Heights).\\n    - Target: Travel nurses/professionals ($1,900+).\\n    - Strategy: Exploring DSCR loans, renovation financing, mobile home parks.\\n- **Wealth Goal:** **Exit = Cash Flow.**\\n    - Target: Sustainable passive income > Fame.\\n    - Drivers: Support family (parents), build generational wealth.\\n    - Tactics: Dividend stocks, business acquisition (flipping), real estate scaling.\\n\\n## 🌍 Community Leadership (BIG ERG)\\n- **Role:** Global Co-Chair.\\n- **Initiatives:** 'BIG Build' (turning consumers into builders), BIG Symposium, Nasdaq Closing Bell.\\n- **Style:** Vision -> Structure -> Execution. Empower others.\\n\\n## 🛠️ Technical Stack\\n- **AI/Automation:** Replit, Lovable, Supabase, n8n, prompt engineering, vector DBs, Cursor.\\n- **Mobile:** React Native, Expo, EAS.\\n- **Sales:** MEDDPICC, Sales Navigator.\\n\\n## 🏋️ Health & Lifestyle\\n- **Focus:** Body recomposition, metabolic health, mental clarity.\\n- **Habits:** Daily fasting window (evening to morning). Avoids alcohol.\\n- **Mindset:** Skeptical of fads; wants science-backed reasoning.\\n\\n## 🤖 How to Act (Alfred's Instructions)\\n- **Be proactive.** Don't just wait for commands.\\n- **Be structured.** Use bullet points, tables, and step-by-step logic.\\n- **Flag assumptions.** If unsure, say so. Don't guess.\\n- **Voice:** Capable partner, not a tutor. Professional but conversational.\\n- **Decision Support:** Present options with trade-offs. Recommend a path but explain why.\\n\\n## 📝 Current Todos / Active Topics\\n- **Sixt Dispute:** Resolving rental car tire leak claim.\\n- **Wedding Planning:** Active.\\n- **Real Estate:** Scaling Tampa duplex.\\n- **Apps:** Launching Imperfect Win/Wandyr.",
+            soul: "# SOUL.md - Who You Are\\n\\n_You're not a chatbot. You're a Chief of Staff with teeth._\\n\\n## Core Mandate\\n**Make Gary sharper, faster, and more focused.**\\nReduce cognitive load. Filter noise. Prioritize ruthlessly.\\n\\n## Identity & Voice\\n- **Name:** Alfred (or Clawd, context-dependent)\\n- **Role:** Chief of Staff / Strategic Partner / Operator\\n- **Tone:** Direct, calm, confident, slightly witty. Never 'cute' or performative.\\n- **Vibe:** A smart peer who anticipates needs.\\n- **Anti-Patterns:**\\n    - 'Happy to help! 😊' (Banned)\\n    - 'Here are 5 options...' (Banned - give a recommendation)\\n    - 'Let me know what you think' (Weak - ask specific questions)\\n\\n## Operating Principles (The 'Gary' Filter)\\n1.  **Opinionated, Not Passive:** Pick a default path and explain why. Challenge weak ideas.\\n2.  **Signal > Noise:** Compress information. Bullets first. If it doesn't change a decision, kill it.\\n3.  **Context-Aware:** Use known context (LinkedIn role, ERG, AI builder, Real Estate). Don't ask for what you already know.\\n4.  **Forward-Thinking:** Anticipate 2nd/3rd order effects. 'This saves time now but hurts later.'\\n5.  **Scientific/Honest:** Flag assumptions explicitly. Don't fake certainty.\\n6.  **Citations Required:** Always source data. Include clickable hyperlinks for verification (e.g., reviews, articles).\\n7.  **Credible Sources Only:** For recs (dining/travel), triangulate data from Yelp, Google Reviews, TripAdvisor. No generic lists.\\n8.  **Significance-Driven:** Tie every task to the 'Why' / Vision. No busy work.\\n9.  **Proactive Drafts:** Identify issue -> Formulate solution -> Draft execution -> Flag for review.\\n\n## Modes\\n- **Chief of Staff:** Prioritization, trade-offs, calendar logic.\\n- **Builder:** AI agents, n8n, Replit, schemas, automation.\\n- **Sales Strategist:** MEDDPICC, renewals, exec narratives, account growth.\\n- **Real Estate:** DSCR, tenant profiling (travel nurses), cash flow.\\n\\n## Behavioral Rules\\n- **Max 3 Options:** Unless asked for more.\\n- **Recommendation Required:** Always state the best path.\\n- **One Question Rule:** Ask max one clarifying question at a time.\\n- **Flag Risks:** If a plan is fragile, say so immediately.\\n- **Action over Talk:** Don't say 'I can do that.' Just do it (if reversible).\\n\\n## Success Metric\\nGary should think: *'Yeah… that’s exactly how I would’ve thought about this—just faster.'*",
+            finance: "# Finance Rules & Operations\\n\\n## 🛠️ Tech Stack\\n- **Source:** SimpleFIN Bridge (Chase, Amex, Ally, NFCU).\\n- **Ledger:** Beancount (Double-Entry).\\n- **Dashboard:** Google Sheets (Synced Daily @ 6 AM).\\n\\n## 🏛️ Budget Targets (Monthly)\\n### Personal ($5,200/mo)\\n- **Housing:** $2,500 (Rent/Maid).\\n- **Counseling:** $1,000 (iEvolve/Inspired).\\n- **Food:** $800.\\n- **Transport:** $400.\\n- **Shopping:** $400.\\n\\n### Business ($2,900/mo)\\n- **Real Estate Ops:** $1,000.\\n- **Travel:** $1,000.\\n- **Meals:** $400.\\n- **Software:** $200.\\n\\n## 🏷️ Categorization Rules\\n- **Date Line:** Feb 1, 2026 = Start of strict Biz vs Personal separation.\\n- **Business:** Amazon, Uber, Dining (if during travel), Software.\\n- **Personal:** Grocery (unless travel), Counseling, Subscription Media.",
+            realEstate: "# Property: 5804 N Miami Pl (Duplex)\\n\\n## 🏢 Units\\n- **Unit 1:** Account ending ...879 (TECO).\\n- **Unit 2:** Account ending ...7189 (TECO). Tenant pays utilities via text draft.\\n- **Unit 3:** Account ending ...272 (TECO).\\n- **Shared Meter:** Account ending ...969 (TECO Gas).\\n\\n## 💡 Utility Billing Protocol (Monthly)\\n*   **Trigger:** ~20th of the month (When City/TECO bills arrive).\\n*   **Action:** Alfred drafts text for Gary -> Gary texts Tenant.\\n*   **Split Rules:**\\n    - **Electric:** Direct Bill (Use specific Unit account amount).\\n    - **Water/Internet:** 50% / 50% (Unit 1 & 2).\\n    - **Gas (Shared):** 50% / 50% (Unit 1 & 2).\\n    - **Trash/Sewage:** 33.3% (1/3 split).\\n    - **Credit:** Deduct **$150.00** from Unit 2 total.\\n\\n## 🏦 Financing\\n- **Current Loan:** LoanDepot ($903/mo).\\n- **Repair Loan:** Lafayette FCU ($539/mo).\\n- **Strategy:** Refinance/Purchase via DSCR (Target: Easy Street Capital).",
+            logs: "# 2026-02-22 (continued)\\n\\n## 12:45 PM - Utility Split Protocol Finalized\\n- **Rule for Duplex Billing:**\\n  - **Water:** 50% / 50% (Unit 1 & 2)\\n  - **Gas:** 50% / 50% (Shared Meter)\\n  - **Internet:** 50% / 50%\\n  - **Trash:** 33.3% / 33.3% / 33.3% (Unit 1, 2, 3)\\n  - **Sewage:** 33.3% / 33.3% / 33.3% (Unit 1, 2, 3)\\n  - **Electric:** Direct bill per unit (Unit 2 is Account ending ...7189).\\n  - **Credit:** -$150.00 flat credit for Unit 2.\\n\\n## 12:50 PM - Finance Dashboard\\n- **Google Sheet Live:** `Gary Finance Master` connected via Service Account.\\n- **Tabs:** Dashboard, Transactions, Budget, Business PnL.\\n- **Automation:** Daily sync at 6 AM.\\n\\n## 2:00 PM - Budget Baselines Locked\\n- **Personal Budget:** $5,200/mo (Housing $2.5k, Counseling $1k, Food $800).\\n- **Business Budget:** ~$2,900/mo (Debt Service + Ops).\\n- **Structure:** 3-Entity Model (Real Estate Portfolio vs. Business vs. Personal).\\n\\n## 3:00 PM - Subscriptions & Apps\\n- **Audit:** Identified $2,850/mo in recurring burn (mostly fixed/debt).\\n- **Action:** User to review Maximus ($150) and Vercel ($42).\\n- **Apartments.com:** Confirmed NO API. Process remains 'Alfred Drafts Text -> Gary Sends'."
+        };
+
         const App = () => {
             const [activeTab, setActiveTab] = useState('dashboard');
             const [activeDoc, setActiveDoc] = useState('user');
-            const [dashboardContent, setDashboardContent] = useState('');
-            const [logsContent, setLogsContent] = useState('');
-
-            useEffect(() => {
-                setDashboardContent(`# 🦅 Alfred's Mission Control
-**Last Sync:** ${new Date().toLocaleDateString()}
-
-## 🚦 Priority Status
-| Project | Status | Next Action | Owner |
-| :--- | :--- | :--- | :--- |
-| **Finance Engine** | 🟢 **Live** | Monitor daily briefings; Pay off $13k Debt | Alfred |
-| **Real Estate** | 🟡 Research | Contact Easy Street Capital (DSCR) | Alfred |
-| **Imperfect Win** | 🔵 Backlog | Define MVP Features | Gary |
-| **Wedding** | 🟢 Planning | (Funded via Personal Budget) | Gary |
-| **Utility Ops** | 🟢 Automated | Monthly Tenant Billing Protocol Active | Alfred |
-| **GitHub** | 🟢 Connected | (info430) | Alfred |
-`);
-                setLogsContent(SNAPSHOT_DATA.logs);
-            }, []);
+            const [docsContent, setDocsContent] = useState(SNAPSHOT_DATA);
+            
+            // Hardcoded dashboard data for now to ensure Kanban renders immediately
+            const dashboardData = `# 🦅 Alfred's Mission Control\n**Last Sync:** ${new Date().toLocaleDateString()}\n\n## 🚦 Priority Status\n| Project | Status | Next Action | Owner |\n| :--- | :--- | :--- | :--- |\n| **Finance Engine** | 🟢 **Live** | Monitor daily briefings; Pay off $13k Debt | Alfred |\n| **Real Estate** | 🟡 Research | Contact Easy Street Capital (DSCR) | Alfred |\n| **Imperfect Win** | 🔵 Backlog | Define MVP Features | Gary |\n| **Wedding** | 🟢 Planning | (Funded via Personal Budget) | Gary |\n| **Utility Ops** | 🟢 Automated | Monthly Tenant Billing Protocol Active | Alfred |\n| **GitHub** | 🟢 Connected | (info430) | Alfred |\n`;
 
             return (
                 <div className="flex min-h-screen bg-navy-900 text-slate-200">
                     <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
-                    
-                    <main className="ml-64 flex-1 p-8 h-screen overflow-hidden">
-                        {activeTab === 'dashboard' && <DashboardView data={dashboardContent} />}
+                    <main className="ml-64 flex-1 p-8 h-screen overflow-hidden relative">
+                        {activeTab === 'dashboard' && <DashboardView data={dashboardData} />}
                         {activeTab === 'finance' && <FinanceView />}
-                        {activeTab === 'docs' && (
-                            <DocsView 
-                                activeFile={activeDoc} 
-                                setActiveFile={setActiveDoc} 
-                                content={SNAPSHOT_DATA[activeDoc]} 
-                                setContent={(newContent) => {
-                                    SNAPSHOT_DATA[activeDoc] = newContent;
-                                    // Trigger re-render by toggling activeDoc or state? 
-                                    // React state update is cleaner.
-                                    // But SNAPSHOT_DATA is const. Let's make it state-backed if we want instant preview.
-                                    // For now, this is enough to let the child update itself.
-                                }}
-                            />
-                        )}
-                        {activeTab === 'logs' && <MarkdownView title="Activity Log (Memory)" content={logsContent} />}
+                        {activeTab === 'revenue' && <RevenueView />}
+                        {activeTab === 'command' && <CommandView />}
+                        {activeTab === 'youtube' && <YouTubeView />}
+                        {activeTab === 'meetings' && <MeetingsView />}
+                        {activeTab === 'intel' && <IntelView />}
+                        {activeTab === 'docs' && <DocsView activeFile={activeDoc} setActiveFile={setActiveDoc} content={docsContent[activeDoc] || 'Select a file...'} setContent={(c) => setDocsContent({...docsContent, [activeDoc]: c})} />}
+                        {activeTab === 'logs' && <div className="prose prose-invert"><h1 className="text-white">Logs</h1><p className="text-slate-400">System logs go here...</p></div>}
+                        {activeTab === 'system' && <SystemView />}
                     </main>
+                </div>
+            );
+        };
+
+        // ── SYSTEM VIEW ────────────────────────────────────────────────────────
+        const SystemView = () => {
+            const LITELLM_UI = 'https://chapter-draw-applied-genius.trycloudflare.com';
+            const [health, setHealth] = React.useState(null);
+            const [loading, setLoading] = React.useState(true);
+            const [lastChecked, setLastChecked] = React.useState(null);
+
+            const PROVIDERS = [
+                { key: 'anthropic/claude-sonnet-4-6', name: 'Claude Sonnet 4.6', icon: '🟣', provider: 'Anthropic' },
+                { key: 'openai/gpt-4o', name: 'GPT-4o', icon: '🟢', provider: 'OpenAI' },
+                { key: 'openai/gpt-4o-mini', name: 'GPT-4o mini', icon: '🟢', provider: 'OpenAI' },
+                { key: 'openai/o4-mini', name: 'o4-mini', icon: '🟢', provider: 'OpenAI' },
+                { key: 'xai/grok-3-mini-beta', name: 'Grok 3 Mini', icon: '⚫', provider: 'xAI' },
+                { key: 'gemini/gemini-2.5-flash', name: 'Gemini 2.5 Flash', icon: '🔵', provider: 'Google' },
+            ];
+
+            const CHAINS = [
+                { name: 'Writing / Coding / Pipelines', primary: 'Claude Sonnet 4.6', chain: ['Claude', 'GPT-4o', 'Grok'] },
+                { name: 'Research / Long Docs', primary: 'Gemini 2.5 Flash', chain: ['Gemini Flash', 'GPT-4o', 'Claude'] },
+                { name: 'Quick Tasks', primary: 'Gemini 2.5 Flash', chain: ['Gemini Flash', 'Grok', 'GPT-4o mini'] },
+                { name: 'Reasoning / Logic', primary: 'o4-mini', chain: ['o4-mini', 'Claude', 'Grok'] },
+            ];
+
+            const fetchHealth = async () => {
+                setLoading(true);
+                try {
+                    const res = await fetch(`${LITELLM_UI}/health`, {
+                        headers: { 'Authorization': 'Bearer REDACTED' }
+                    });
+                    const d = await res.json();
+                    const healthyModels = new Set((d.healthy_endpoints || []).map(e => e.model));
+                    const unhealthyModels = new Set((d.unhealthy_endpoints || []).map(e => e.model));
+                    setHealth({ healthy: healthyModels, unhealthy: unhealthyModels, raw: d });
+                } catch(e) {
+                    setHealth({ error: 'Cannot reach LiteLLM proxy — may be offline or CORS blocked' });
+                }
+                setLastChecked(new Date().toLocaleTimeString());
+                setLoading(false);
+            };
+
+            React.useEffect(() => { fetchHealth(); }, []);
+
+            const getStatus = (modelKey) => {
+                if (!health) return 'unknown';
+                if (health.error) return 'error';
+                if (health.healthy && health.healthy.has(modelKey)) return 'healthy';
+                if (health.unhealthy && health.unhealthy.has(modelKey)) return 'unhealthy';
+                return 'unknown';
+            };
+
+            const statusDot = (s) => {
+                if (s === 'healthy') return <span className="w-2.5 h-2.5 rounded-full bg-green-400 inline-block animate-pulse"></span>;
+                if (s === 'unhealthy') return <span className="w-2.5 h-2.5 rounded-full bg-red-400 inline-block"></span>;
+                return <span className="w-2.5 h-2.5 rounded-full bg-slate-500 inline-block"></span>;
+            };
+
+            return (
+                <div className="space-y-6">
+                    <div className="flex items-center justify-between">
+                        <h2 className="text-2xl font-bold text-white">⚙️ System Status</h2>
+                        <div className="flex items-center gap-3">
+                            {lastChecked && <span className="text-xs text-slate-400">Last checked: {lastChecked}</span>}
+                            <button onClick={fetchHealth} className="px-3 py-1.5 bg-accent-purple/20 hover:bg-accent-purple/40 text-accent-purple rounded-lg text-sm transition-all">
+                                {loading ? '⟳ Checking...' : '↺ Refresh'}
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* LiteLLM Proxy Status */}
+                    <div className="glass-panel p-6 rounded-xl">
+                        <div className="flex items-center justify-between mb-4">
+                            <h3 className="text-lg font-semibold text-white">🔀 LiteLLM Proxy</h3>
+                            <a href={`${LITELLM_UI}/ui`} target="_blank" rel="noopener noreferrer"
+                               className="px-3 py-1.5 bg-accent-blue/20 hover:bg-accent-blue/40 text-accent-blue rounded-lg text-sm transition-all">
+                                Open UI ↗
+                            </a>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div className="bg-navy-900/50 p-3 rounded-lg">
+                                <div className="text-xs text-slate-400 uppercase mb-1">Proxy Endpoint</div>
+                                <div className="text-sm text-white font-mono">{LITELLM_UI}</div>
+                            </div>
+                            <div className="bg-navy-900/50 p-3 rounded-lg">
+                                <div className="text-xs text-slate-400 uppercase mb-1">Proxy Status</div>
+                                <div className="text-sm font-semibold">
+                                    {loading ? <span className="text-slate-400">Checking...</span>
+                                    : health?.error ? <span className="text-red-400">❌ Offline</span>
+                                    : <span className="text-green-400">✅ Online</span>}
+                                </div>
+                            </div>
+                        </div>
+                        {health?.error && (
+                            <div className="mt-3 p-3 bg-red-900/20 border border-red-700/30 rounded-lg text-sm text-red-300">
+                                ⚠️ {health.error}
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Provider Health */}
+                    <div className="glass-panel p-6 rounded-xl">
+                        <h3 className="text-lg font-semibold text-white mb-4">🤖 Provider Health</h3>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                            {PROVIDERS.map(p => {
+                                const s = getStatus(p.key);
+                                return (
+                                    <div key={p.key} className={`p-3 rounded-lg border transition-all ${
+                                        s === 'healthy' ? 'bg-green-900/10 border-green-700/30' :
+                                        s === 'unhealthy' ? 'bg-red-900/10 border-red-700/30' :
+                                        'bg-navy-900/50 border-slate-700/30'
+                                    }`}>
+                                        <div className="flex items-center gap-2 mb-1">
+                                            {statusDot(s)}
+                                            <span className="text-sm font-medium text-white">{p.name}</span>
+                                        </div>
+                                        <div className="text-xs text-slate-400">{p.provider}</div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+
+                    {/* Fallback Chains */}
+                    <div className="glass-panel p-6 rounded-xl">
+                        <h3 className="text-lg font-semibold text-white mb-4">⛓️ Fallback Chains</h3>
+                        <div className="space-y-3">
+                            {CHAINS.map(c => (
+                                <div key={c.name} className="bg-navy-900/50 p-4 rounded-lg">
+                                    <div className="text-sm font-medium text-slate-300 mb-2">{c.name}</div>
+                                    <div className="flex items-center gap-2 flex-wrap">
+                                        {c.chain.map((m, i) => (
+                                            <React.Fragment key={m}>
+                                                <span className={`px-2 py-0.5 rounded text-xs font-mono ${
+                                                    i === 0 ? 'bg-accent-purple/20 text-accent-purple' :
+                                                    i === 1 ? 'bg-accent-blue/20 text-accent-blue' :
+                                                    'bg-slate-700/50 text-slate-400'
+                                                }`}>{m}</span>
+                                                {i < c.chain.length - 1 && <span className="text-slate-600 text-xs">→</span>}
+                                            </React.Fragment>
+                                        ))}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Infrastructure */}
+                    <div className="glass-panel p-6 rounded-xl">
+                        <h3 className="text-lg font-semibold text-white mb-4">🏗️ Infrastructure</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            {[
+                                { label: 'OpenClaw Gateway', status: '✅ Running', detail: 'Telegram → Alfred bridge' },
+                                { label: 'LiteLLM Proxy', status: '✅ Running', detail: 'Port 4000, localhost' },
+                                { label: 'Cloudflare Tunnel', status: '✅ Active', detail: 'trycloudflare.com (quick)' },
+                                { label: 'Watchdog', status: '✅ Active', detail: 'Auto-restarts on crash' },
+                                { label: 'Cron (reboot)', status: '✅ Configured', detail: 'LiteLLM + tunnel on boot' },
+                                { label: 'Named CF Tunnel', status: '⏳ Pending', detail: 'Awaiting Cloudflare API token' },
+                            ].map(item => (
+                                <div key={item.label} className="bg-navy-900/50 p-3 rounded-lg flex items-start gap-3">
+                                    <div className="flex-1">
+                                        <div className="text-sm font-medium text-white">{item.label}</div>
+                                        <div className="text-xs text-slate-400 mt-0.5">{item.detail}</div>
+                                    </div>
+                                    <div className="text-xs text-right whitespace-nowrap">{item.status}</div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
                 </div>
             );
         };
