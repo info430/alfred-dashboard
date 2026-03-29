@@ -790,6 +790,7 @@
         // ── SYSTEM VIEW ────────────────────────────────────────────────────────
         const SystemView = () => {
             const LITELLM_UI = 'https://chapter-draw-applied-genius.trycloudflare.com';
+            const STATUS_API = 'https://paso-brief-rocky-capture.trycloudflare.com';
             const [health, setHealth] = React.useState(null);
             const [loading, setLoading] = React.useState(true);
             const [lastChecked, setLastChecked] = React.useState(null);
@@ -813,15 +814,21 @@
             const fetchHealth = async () => {
                 setLoading(true);
                 try {
-                    const res = await fetch(`${LITELLM_UI}/health`, {
-                        headers: { 'Authorization': 'Bearer REDACTED' }
-                    });
+                    const res = await fetch(`${STATUS_API}/status`);
                     const d = await res.json();
-                    const healthyModels = new Set((d.healthy_endpoints || []).map(e => e.model));
-                    const unhealthyModels = new Set((d.unhealthy_endpoints || []).map(e => e.model));
-                    setHealth({ healthy: healthyModels, unhealthy: unhealthyModels, raw: d });
+                    if (!d.proxy_online) {
+                        setHealth({ error: d.error || 'LiteLLM proxy offline' });
+                    } else {
+                        const healthyModels = new Set(
+                            (d.providers || []).filter(p => p.status === 'healthy').map(p => p.model)
+                        );
+                        const unhealthyModels = new Set(
+                            (d.providers || []).filter(p => p.status === 'unhealthy').map(p => p.model)
+                        );
+                        setHealth({ healthy: healthyModels, unhealthy: unhealthyModels, raw: d });
+                    }
                 } catch(e) {
-                    setHealth({ error: 'Cannot reach LiteLLM proxy — may be offline or CORS blocked' });
+                    setHealth({ error: 'Status API unreachable — tunnel may be restarting' });
                 }
                 setLastChecked(new Date().toLocaleTimeString());
                 setLoading(false);
